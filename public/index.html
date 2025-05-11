@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Vive Aguachica - La plataforma digital que centraliza eventos, presentaciones y experiencias locales en Aguachica, Cesar">
+    <meta name="keywords" content="eventos Aguachica, cultura Cesar, conciertos, teatro, arte, festivales">
+    <title>Vive Aguachica - Cultura y Eventos</title>
+    <link rel="stylesheet" href="../src/assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../src/assets/js/main.js" defer></script>
+    <script src="../src/assets/js/search.js" defer></script>
+    <script src="../src/assets/js/sites.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../src/assets/js/event-form.js" defer></script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <header class="bg-white/80 backdrop-blur-md shadow-md fixed top-0 left-0 right-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center w-full md:w-auto mb-4 md:mb-0">
+                <a href="index.html" class="flex items-center">
+                    <img src="../src/assets/images/logos/logo.svg" alt="Vive Aguachica" class="w-10 h-10">
+                    <span class="ml-2 text-xl font-bold text-indigo-800">Vive Aguachica</span>
+                </a>
+                
+                <button id="menu-toggle" class="md:hidden focus:outline-none ml-auto">
+                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="search-container" class="relative w-full md:w-1/3 mb-4 md:mb-0">
+                <form id="search-form" class="flex">
+                    <input type="text" id="search-input" placeholder="Buscar eventos o artistas..." autocomplete="off"
+                        class="w-full border border-gray-300 rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+            
+            <nav class="hidden md:flex space-x-8">
+                <a href="index.html" class="text-gray-700 hover:text-indigo-700 transition">Inicio</a>
+                <a href="eventos.html" class="text-gray-700 hover:text-indigo-700 transition">Eventos</a>
+                <a href="artistas.html" class="text-gray-700 hover:text-indigo-700 transition">Artistas</a>
+                <a href="rutas.html" class="text-gray-700 hover:text-indigo-700 transition">Rutas</a>
+                <a href="organizadores.html" class="text-gray-700 hover:text-indigo-700 transition">Organizadores</a>
+                <a href="contacto.html" class="text-gray-700 hover:text-indigo-700 transition">Contacto</a>
+                
+                <!-- Botones de autenticación -->
+                <button data-auth="login" class="text-gray-700 hover:text-indigo-700 transition">
+                    Iniciar Sesión
+                </button>
+                
+                <!-- Perfil de usuario (visible cuando hay sesión) -->
+                <div data-auth="user" class="hidden">
+                    <div class="relative">
+                        <button id="userMenuButton" class="flex items-center space-x-2 text-gray-700 hover:text-indigo-700">
+                            <img id="userAvatar" src="https://via.placeholder.com/32" alt="Avatar" class="w-8 h-8 rounded-full">
+                            <span id="userName" class="text-sm font-medium">Usuario</span>
+                        </button>
+                        
+                        <!-- Menú desplegable -->
+                        <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mi Perfil</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mis Eventos</a>
+                            <button id="logoutButton" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        
+        <!-- Menú móvil -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+            <a href="index.html" class="block py-2 text-gray-700 hover:text-indigo-700">Inicio</a>
+            <a href="eventos.html" class="block py-2 text-gray-700 hover:text-indigo-700">Eventos</a>
+            <a href="artistas.html" class="block py-2 text-gray-700 hover:text-indigo-700">Artistas</a>
+            <a href="rutas.html" class="block py-2 text-gray-700 hover:text-indigo-700">Rutas</a>
+            <a href="organizadores.html" class="block py-2 text-gray-700 hover:text-indigo-700">Organizadores</a>
+            <a href="contacto.html" class="block py-2 text-gray-700 hover:text-indigo-700">Contacto</a>
+            
+            <!-- Botones de autenticación móvil -->
+            <button data-auth="login" class="block w-full text-left py-2 text-gray-700 hover:text-indigo-700">
+                Iniciar Sesión
+            </button>
+            
+            <!-- Perfil de usuario móvil (visible cuando hay sesión) -->
+            <div data-auth="user" class="hidden">
+                <div class="py-2">
+                    <div class="flex items-center space-x-2">
+                        <img id="userAvatarMobile" src="https://via.placeholder.com/32" alt="Avatar" class="w-8 h-8 rounded-full">
+                        <span id="userNameMobile" class="text-sm font-medium">Usuario</span>
+                    </div>
+                </div>
+                <a href="#" class="block py-2 text-gray-700 hover:text-indigo-700">Mi Perfil</a>
+                <a href="#" class="block py-2 text-gray-700 hover:text-indigo-700">Mis Eventos</a>
+                <button id="logoutButtonMobile" class="block w-full text-left py-2 text-gray-700 hover:text-indigo-700">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section con Slider -->
+    <section class="relative bg-black mt-[88px] md:mt-0" style="height: 480px;">
+        <div class="absolute inset-0 z-0">
+            <div class="slider-container h-full">
+                <!-- Slider Items con efecto de oscurecimiento -->
+                <div class="slider-item active">
+                    <div class="absolute inset-0 bg-black opacity-50"></div>
+                    <img src="../src/assets/images/slider/aguachica-panorama.jpg" alt="Panorama de Aguachica" class="w-full h-full object-cover">
+                </div>
+                <div class="slider-item">
+                    <div class="absolute inset-0 bg-black opacity-50"></div>
+                    <img src="../src/assets/images/slider/festival-vallenato.jpg" alt="Festival Vallenato" class="w-full h-full object-cover">
+                </div>
+                <div class="slider-item">
+                    <div class="absolute inset-0 bg-black opacity-50"></div>
+                    <img src="../src/assets/images/slider/danza-contemporanea.jpg" alt="Danza Contemporánea" class="w-full h-full object-cover">
+                </div>
+                <div class="slider-item">
+                    <div class="absolute inset-0 bg-black opacity-50"></div>
+                    <video class="w-full h-full object-cover" autoplay muted loop>
+                        <source src="../src/assets/images/slider/aguachica-video.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido superpuesto -->
+        <div class="relative z-10 h-full flex flex-col justify-center items-center text-white px-4">
+            <h1 class="text-4xl md:text-5xl font-bold text-center mb-3 tracking-tight">Tu ciudad. Tus planes. Tu gente.</h1>
+            <p class="text-lg md:text-xl text-center mb-8 opacity-90">Vive Aguachica como nunca antes.</p>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="eventos.html" class="bg-indigo-600/80 hover:bg-indigo-600 text-white px-8 py-3 rounded-full text-lg font-medium transition-all duration-300 flex items-center justify-center gap-2">
+                    <span class="text-xl">🎟️</span>
+                    Ver Eventos
+                </a>
+                <a href="artistas.html" class="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-8 py-3 rounded-full text-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 border border-white/20">
+                    <span class="text-xl">🎤</span>
+                    Artistas Locales
+                </a>
+            </div>
+        </div>
+
+        <!-- Slider Controls -->
+        <button class="slider-control prev absolute left-4 top-1/2 transform -translate-y-1/2 z-20">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="slider-control next absolute right-4 top-1/2 transform -translate-y-1/2 z-20">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <!-- Slider Indicators -->
+        <div class="slider-indicators absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2">
+            <span class="indicator active"></span>
+            <span class="indicator"></span>
+            <span class="indicator"></span>
+            <span class="indicator"></span>
+        </div>
+    </section>
+
+    <!-- Sección de características -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">¿Qué ofrece Vive Aguachica?</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Característica 1 -->
+                <div class="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition">
+                    <div class="text-indigo-600 mb-4">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Calendario de Eventos</h3>
+                    <p class="text-gray-600">Encuentra todos los eventos culturales, musicales y deportivos de Aguachica en un solo lugar.</p>
+                </div>
+                
+                <!-- Característica 2 -->
+                <div class="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition">
+                    <div class="text-indigo-600 mb-4">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Comunidad Activa</h3>
+                    <p class="text-gray-600">Conéctate con otros asistentes, artistas y organizadores de eventos en tu ciudad.</p>
+                </div>
+                
+                <!-- Característica 3 -->
+                <div class="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition">
+                    <div class="text-indigo-600 mb-4">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Boletos Digitales</h3>
+                    <p class="text-gray-600">Compra tus entradas de forma segura y recíbelas directamente en tu dispositivo móvil.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Sitios para Visitar -->
+    <section class="pt-12 pb-24 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <div class="inline-block">
+                    <span class="text-indigo-600 font-medium uppercase tracking-wider">Explora la ciudad</span>
+                </div>
+                <h2 class="text-4xl font-bold text-gray-800 mt-4">Sitios que puedes visitar hoy</h2>
+                <p class="text-gray-600 mt-6 max-w-2xl mx-auto">Descubre los lugares más emblemáticos y encantadores de Aguachica</p>
+            </div>
+            
+            <div class="carousel-container relative">
+                <div class="carousel-wrapper">
+                    <div class="carousel-track">
+                        <!-- Sitio 1 -->
+                        <div class="carousel-slide">
+                            <div class="site-card">
+                                <div class="relative h-48 rounded-xl overflow-hidden">
+                                    <img src="../src/assets/images/sitios/parque-principal.jpg" alt="Parque Principal" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="text-xl font-bold mb-2 text-gray-800">Parque Principal</h3>
+                                    <p class="text-gray-600 mb-4">El corazón de la ciudad, perfecto para pasear y disfrutar del ambiente local.</p>
+                                    <div class="flex items-center text-sm text-gray-600 mb-2">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                        <span>Calle 5 # 10-20, Centro</span>
+                                    </div>
+                                    <div class="flex items-center text-sm text-indigo-600">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span>Abierto ahora</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sitio 2 -->
+                        <div class="carousel-slide">
+                            <div class="site-card">
+                                <div class="relative h-48 rounded-xl overflow-hidden">
+                                    <img src="../src/assets/images/sitios/catedral.jpg" alt="Catedral" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="text-xl font-bold mb-2 text-gray-800">Catedral San Roque</h3>
+                                    <p class="text-gray-600 mb-4">Majestuosa catedral con arquitectura colonial y centro de la fe local.</p>
+                                    <div class="flex items-center text-sm text-gray-600 mb-2">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                        <span>Carrera 7 # 5-30, Centro</span>
+                                    </div>
+                                    <div class="flex items-center text-sm text-indigo-600">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span>Abierto hasta 6:00 PM</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sitio 3 -->
+                        <div class="carousel-slide">
+                            <div class="site-card">
+                                <div class="relative h-48 rounded-xl overflow-hidden">
+                                    <img src="../src/assets/images/sitios/plaza-mercado.jpg" alt="Plaza de Mercado" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="text-xl font-bold mb-2 text-gray-800">Plaza de Mercado</h3>
+                                    <p class="text-gray-600 mb-4">Experimenta la cultura local y los sabores tradicionales de la región.</p>
+                                    <div class="flex items-center text-sm text-gray-600 mb-2">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                        <span>Calle 6 # 8-15, Centro</span>
+                                    </div>
+                                    <div class="flex items-center text-sm text-indigo-600">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span>Abierto hasta 5:00 PM</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sitio 4 -->
+                        <div class="carousel-slide">
+                            <div class="site-card">
+                                <div class="relative h-48 rounded-xl overflow-hidden">
+                                    <img src="../src/assets/images/sitios/parque-ecologico.jpg" alt="Parque Ecológico" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="text-xl font-bold mb-2 text-gray-800">Parque Ecológico</h3>
+                                    <p class="text-gray-600 mb-4">Un espacio natural para conectar con la naturaleza y hacer ejercicio.</p>
+                                    <div class="flex items-center text-sm text-gray-600 mb-2">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                        <span>Carrera 10 # 12-45, Barrio El Porvenir</span>
+                                    </div>
+                                    <div class="flex items-center text-sm text-indigo-600">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span>Abierto hasta 6:00 PM</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sitio 5 -->
+                        <div class="carousel-slide">
+                            <div class="site-card">
+                                <div class="relative h-48 rounded-xl overflow-hidden">
+                                    <img src="../src/assets/images/sitios/casa-cultura.jpg" alt="Casa de la Cultura" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="text-xl font-bold mb-2 text-gray-800">Casa de la Cultura</h3>
+                                    <p class="text-gray-600 mb-4">Centro cultural con exposiciones, talleres y eventos artísticos.</p>
+                                    <div class="flex items-center text-sm text-gray-600 mb-2">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                        <span>Calle 4 # 7-25, Centro</span>
+                                    </div>
+                                    <div class="flex items-center text-sm text-indigo-600">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span>Abierto hasta 7:00 PM</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de navegación -->
+                <button class="carousel-control prev absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm text-gray-800 p-3 rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all duration-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                <button class="carousel-control next absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm text-gray-800 p-3 rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all duration-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Próximos eventos -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Eventos Próximos</h2>
+                <a href="eventos.html" class="text-indigo-600 hover:text-indigo-800 font-medium">Ver todos →</a>
+            </div>
+            
+            <div id="upcoming-events" class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Los eventos se cargarán aquí dinámicamente -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de artistas destacados -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Artistas Destacados</h2>
+                <a href="artistas.html" class="text-indigo-600 hover:text-indigo-800 font-medium">Ver todos →</a>
+            </div>
+            
+            <div id="featured-artists" class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Los artistas se cargarán aquí dinámicamente -->
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="bg-[#6C5CE7] rounded-2xl p-8 md:p-12 text-center">
+                <h2 class="text-3xl font-bold mb-6 text-white !text-white">¿Eres organizador o artista?</h2>
+                <p class="text-xl mb-8 max-w-2xl mx-auto text-white !text-white opacity-100">Únete a nuestra plataforma y lleva tus eventos al siguiente nivel.</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button id="openEventModal" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 transition duration-300">Publicar Evento</button>
+                    <a href="contacto.html" class="bg-transparent border-2 border-white text-white font-semibold px-6 py-3 rounded-lg hover:bg-white hover:text-indigo-900 transition duration-300">Contáctanos</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de Publicación de Evento -->
+    <div id="eventModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50" onclick="cerrarModal()">
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all" onclick="event.stopPropagation()">
+                <div class="p-6 md:p-8">
+                    <div class="flex justify-between items-center mb-6 border-b pb-4">
+                        <h3 class="text-2xl font-bold text-gray-800">Publicar Nuevo Evento</h3>
+                        <button id="closeEventModal" class="text-gray-500 hover:text-gray-700 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <form id="eventForm" method="POST" action="https://script.google.com/macros/s/AKfycbw-9Mp1gpHFLXWBOliC2WgONMfXrhNGeGUyeeDeCNn41AKoRnOetRANmw_v-QAUT5Hbgg/exec" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Título del evento *</label>
+                                <input type="text" name="title" required 
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Fecha *</label>
+                                <input type="date" name="date" required 
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Hora *</label>
+                                <input type="time" name="time" required 
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Lugar *</label>
+                                <input type="text" name="location" required 
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Descripción del evento *</label>
+                            <textarea name="description" required rows="4" 
+                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Organizador *</label>
+                                <input type="text" name="organizer" required 
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Redes sociales</label>
+                                <input type="text" name="social_media" placeholder="Facebook, Instagram, etc." 
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Grupos/Artistas participantes</label>
+                            <input type="text" name="participants" 
+                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Público objetivo *</label>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                <label class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                    <input type="checkbox" name="target_audience" value="jovenes" 
+                                        class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                    <span class="text-sm text-gray-700">Jóvenes</span>
+                                </label>
+                                <label class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                    <input type="checkbox" name="target_audience" value="ninos" 
+                                        class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                    <span class="text-sm text-gray-700">Niños</span>
+                                </label>
+                                <label class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                    <input type="checkbox" name="target_audience" value="adultos_mayores" 
+                                        class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                    <span class="text-sm text-gray-700">Adultos mayores</span>
+                                </label>
+                                <label class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                    <input type="checkbox" name="target_audience" value="familias" 
+                                        class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                    <span class="text-sm text-gray-700">Familias</span>
+                                </label>
+                                <label class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                    <input type="checkbox" name="target_audience" value="todos" 
+                                        class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                    <span class="text-sm text-gray-700">Todos</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Entrada *</label>
+                            <div class="space-y-3">
+                                <label class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                    <input type="radio" name="ticket_type" value="gratis" checked 
+                                        class="rounded-full border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                    <span class="text-sm text-gray-700">Gratis</span>
+                                </label>
+                                <label class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                    <input type="radio" name="ticket_type" value="con_boleto" 
+                                        class="rounded-full border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                    <span class="text-sm text-gray-700">Con boleto</span>
+                                </label>
+                                <div id="ticketPriceContainer" class="hidden pl-8">
+                                    <input type="number" name="ticket_price" placeholder="Precio del boleto" 
+                                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Información adicional</label>
+                            <textarea name="additional_info" rows="3" 
+                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Imagen del evento</label>
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-indigo-500 transition-colors">
+                                <div class="space-y-1 text-center">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    <div class="flex text-sm text-gray-600">
+                                        <label class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                            <span>Subir una imagen</span>
+                                            <input type="file" name="event_image" accept="image/*" class="sr-only">
+                                        </label>
+                                        <p class="pl-1">o arrastra y suelta</p>
+                                    </div>
+                                    <p class="text-xs text-gray-500">PNG, JPG, GIF hasta 10MB</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="formMessages" class="hidden">
+                            <div id="successMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg relative hidden">
+                                ¡Gracias por sumarte! Revisaremos y publicaremos el evento lo más pronto posible.
+                            </div>
+                            <div id="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative hidden">
+                                Ha ocurrido un error. Por favor, intenta nuevamente.
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-4 pt-6 border-t">
+                            <button type="button" id="cancelEvent" 
+                                class="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                                Cancelar
+                            </button>
+                            <button type="submit" 
+                                class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                                Enviar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de éxito -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+      <div class="bg-white rounded-lg p-8 shadow-lg text-center transform transition-all duration-300">
+        <div class="text-green-500 mb-4">
+          <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold mb-4 text-gray-800">¡Enviado con éxito!</h2>
+        <p class="text-gray-700">Tu evento ha sido enviado correctamente.</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+        <!-- Sección principal del footer -->
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid md:grid-cols-4 gap-9">
+                <!-- Columna 1: Sobre Nosotros -->
+                <div class="space-y-4">
+                    <h4 class="text-xl font-semibold text-white">Sobre Nosotros</h4>
+                    <p class="text-gray-400 text-base">La comunidad digital para descubrir, disfrutar y apoyar los eventos culturales, artísticos y deportivos de Aguachica, Cesar.</p>
+                    <p class="text-indigo-400 text-base font-medium">🎯 Conectamos talento local con su gente.</p>
+                </div>
+                
+                <!-- Columna 2: Participa en la plataforma -->
+                <div>
+                    <h4 class="text-xl font-semibold mb-4 text-white">Participa en la plataforma</h4>
+                    <ul class="space-y-3">
+                        <li><a href="eventos.html" class="text-gray-400 hover:text-white transition flex items-center text-base">
+                            <span class="mr-2 text-gray-300">📅</span>
+                            Ver todos los eventos
+                        </a></li>
+                        <li><a href="artistas.html" class="text-gray-400 hover:text-white transition flex items-center text-base">
+                            <span class="mr-2 text-gray-300">🧑‍🎤</span>
+                            Conoce artistas locales
+                        </a></li>
+                        <li><a href="contacto.html" class="text-gray-400 hover:text-white transition flex items-center text-base">
+                            <span class="mr-2 text-gray-300">🧑‍💼</span>
+                            ¿Organizas eventos? Súmate aquí
+                        </a></li>
+                    </ul>
+                </div>
+                
+                <!-- Columna 3: Información útil -->
+                <div>
+                    <h4 class="text-xl font-semibold mb-4 text-white">Información útil</h4>
+                    <ul class="space-y-3">
+                        <li><a href="terminos.html" class="text-gray-400 hover:text-white transition flex items-center text-base">
+                            <span class="mr-2 text-gray-300">🛡️</span>
+                            Términos y condiciones
+                        </a></li>
+                        <li><a href="privacidad.html" class="text-gray-400 hover:text-white transition flex items-center text-base">
+                            <span class="mr-2 text-gray-300">🔒</span>
+                            Política de privacidad
+                        </a></li>
+                        <li><a href="cookies.html" class="text-gray-400 hover:text-white transition flex items-center text-base">
+                            <span class="mr-2 text-gray-300">🍪</span>
+                            Uso de cookies
+                        </a></li>
+                        <li><a href="contacto.html" class="text-gray-400 hover:text-white transition flex items-center text-base">
+                            <span class="mr-2 text-gray-300">✉️</span>
+                            Contacto directo
+                        </a></li>
+                    </ul>
+                </div>
+                
+                <!-- Columna 4: Comunidad -->
+                <div>
+                    <div class="space-y-6">
+                        <div class="text-center">
+                            <h4 class="text-white text-xl font-semibold mb-4">🤝 Síguenos en redes sociales</h4>
+                            <div class="flex justify-center space-x-6">
+                                <a href="https://www.facebook.com/viveaguachica" class="text-white hover:text-[#1877F2] transition" target="_blank" rel="noopener noreferrer">
+                                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+                                    </svg>
+                                </a>
+                                <a href="https://www.instagram.com/viveaguachica/" class="text-white hover:text-[#E4405F] transition" target="_blank" rel="noopener noreferrer">
+                                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"/>
+                                    </svg>
+                                </a>
+                                <a href="https://x.com/viveaguachica" class="text-white hover:text-[#000000] transition" target="_blank" rel="noopener noreferrer">
+                                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección inferior del footer -->
+        <div class="bg-gray-950 py-6">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">&copy; 2025 Vive Aguachica. Todos los derechos reservados.</p>
+                    <div class="flex space-x-4 mt-3 md:mt-0">
+                        <a href="contacto.html" class="text-gray-400 hover:text-white text-sm transition">Trabaja con Nosotros</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Esperar a que el DOM esté cargado
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM cargado');
+            
+            // Obtener los elementos
+            const modal = document.getElementById('eventModal');
+            const openButton = document.getElementById('openEventModal');
+            const closeButton = document.getElementById('closeEventModal');
+            const cancelButton = document.getElementById('cancelEvent');
+
+            // Función para abrir el modal
+            function abrirModal() {
+                console.log('Abriendo modal');
+                modal.classList.remove('hidden');
+            }
+
+            // Función para cerrar el modal
+            window.cerrarModal = function() {
+                console.log('Cerrando modal');
+                modal.classList.add('hidden');
+            }
+
+            // Agregar eventos
+            openButton.addEventListener('click', abrirModal);
+            closeButton.addEventListener('click', cerrarModal);
+            cancelButton.addEventListener('click', cerrarModal);
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+          const form = document.getElementById("eventForm");
+          const successModal = document.getElementById("successModal");
+          const successMessage = document.getElementById("successMessage");
+          const errorMessage = document.getElementById("errorMessage");
+
+          form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            // Mostrar mensaje de carga
+            successMessage.classList.add("hidden");
+            errorMessage.classList.add("hidden");
+
+            fetch("https://script.google.com/macros/s/AKfycbw-9Mp1gpHFLXWBOliC2WgONMfXrhNGeGUyeeDeCNn41AKoRnOetRANmw_v-QAUT5Hbgg/exec", {
+              method: "POST",
+              body: formData,
+              mode: 'no-cors',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              }
+            })
+            .then(() => {
+              // Mostrar modal de éxito
+              successModal.classList.remove("hidden");
+              form.reset();
+              
+              // Cerrar el modal principal
+              document.getElementById("eventModal").classList.add("hidden");
+              
+              // Cerrar el modal de éxito después de 2 segundos
+              setTimeout(() => {
+                successModal.classList.add("hidden");
+              }, 2000);
+            })
+            .catch(error => {
+              console.error("Error al enviar:", error);
+              errorMessage.classList.remove("hidden");
+            });
+          });
+        });
+    </script>
+
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+      import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+      import { updateProfile } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyB-BICWbcKpiP8ImeVBWYVh3eFmrS8mPWY",
+        authDomain: "vive-aguachica.firebaseapp.com",
+        projectId: "vive-aguachica",
+        storageBucket: "viveaguachica.appspot.com",
+        messagingSenderId: "551401519520",
+        appId: "1:551401519520:web:c7d816f408135fc0f48cc5",
+        measurementId: "G-N5E7BKDWWL"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const auth = getAuth(app);
+      const googleProvider = new GoogleAuthProvider();
+
+      // Exponer en window para acceso global
+      window.firebaseAuth = auth;
+      window.firebaseGoogleProvider = googleProvider;
+      window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+      window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+      window.signInWithPopup = signInWithPopup;
+      window.updateProfile = updateProfile;
+    </script>
+
+    <!-- Modal de Login/Registro -->
+    <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-96">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Iniciar Sesión</h2>
+                <button id="closeAuthModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="authForm" class="space-y-4">
+                <div id="nameField" style="display:none;">
+                    <label class="block text-sm font-medium text-gray-700">Nombre</label>
+                    <input type="text" id="displayName" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Correo electrónico</label>
+                    <input type="email" id="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Contraseña</label>
+                    <input type="password" id="password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Iniciar Sesión
+                </button>
+            </form>
+            
+            <div class="mt-4">
+                <button id="googleSignIn" class="w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center">
+                    <img src="https://www.google.com/favicon.ico" alt="Google" class="w-5 h-5 mr-2">
+                    Continuar con Google
+                </button>
+            </div>
+            
+            <div class="mt-4 text-center">
+                <p class="text-sm text-gray-600">
+                    ¿No tienes una cuenta? 
+                    <button id="toggleAuthMode" class="text-blue-600 hover:text-blue-800">Regístrate</button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../src/assets/js/auth.js" defer></script>
+
+    <!-- Contenedor de notificaciones -->
+    <div id="toastContainer" class="fixed top-6 right-6 z-50 space-y-2"></div>
+
+    <!-- Scripts -->
+    <script type="module" src="../src/assets/js/firebase-init.js"></script>
+    <script type="module" src="../src/assets/js/eventos.js"></script>
+    <script type="module" src="../src/assets/js/artistas.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar eventos y artistas
+            displayUpcomingEvents();
+            displayFeaturedArtists();
+            
+            // Inicializar el slider
+            initSlider();
+        });
+    </script>
+</body>
+</html>

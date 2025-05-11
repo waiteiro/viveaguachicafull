@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Arma tu evento perfecto en Aguachica - Personaliza cada detalle de tu celebración">
+    <title>Arma tu Evento - Vive Aguachica</title>
+    <link rel="stylesheet" href="../src/assets/css/styles.css">
+    <link rel="stylesheet" href="css/boda-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../src/assets/js/main.js" defer></script>
+    <script src="../src/assets/js/search.js" defer></script>
+    <script src="../src/assets/js/event-form.js" defer></script>
+    <script type="module" src="js/boda-controller.js"></script>
+    <style>
+        .event-type-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        .event-type-card:hover {
+            transform: translateY(-5px);
+        }
+        .event-type-card.selected {
+            border: 2px solid #4F46E5;
+            background-color: #EEF2FF;
+        }
+        .venue-card, .service-card, .entertainment-card, .photo-video-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .venue-card:hover, .service-card:hover, .entertainment-card:hover, .photo-video-card:hover {
+            transform: translateY(-5px);
+        }
+        .venue-card.selected, .service-card.selected, .entertainment-card.selected, .photo-video-card.selected {
+            border: 2px solid #4F46E5;
+        }
+        .event-icon {
+            font-size: 2.5rem;
+            color: #4F46E5;
+            margin-bottom: 1rem;
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #4F46E5;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex: 1 0 auto;
+            padding-bottom: 4rem;
+        }
+        footer {
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center w-full md:w-auto mb-4 md:mb-0">
+                <a href="index.html" class="flex items-center">
+                    <img src="../src/assets/images/logos/logo.svg" alt="Vive Aguachica" class="w-10 h-10">
+                    <span class="ml-2 text-xl font-bold text-indigo-800">Vive Aguachica</span>
+                </a>
+                
+                <button id="menu-toggle" class="md:hidden focus:outline-none ml-auto">
+                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="search-container" class="relative w-full md:w-1/3 mb-4 md:mb-0">
+                <form id="search-form" class="flex">
+                    <input type="text" id="search-input" placeholder="Buscar eventos o artistas..." autocomplete="off"
+                        class="w-full border border-gray-300 rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+            
+            <nav class="hidden md:flex space-x-8">
+                <a href="index.html" class="text-gray-700 hover:text-indigo-700 transition">Inicio</a>
+                <a href="eventos.html" class="text-gray-700 hover:text-indigo-700 transition">Eventos</a>
+                <a href="artistas.html" class="text-gray-700 hover:text-indigo-700 transition">Artistas</a>
+                <a href="rutas.html" class="text-gray-700 hover:text-indigo-700 transition">Rutas</a>
+                <a href="organizadores.html" class="text-gray-700 hover:text-indigo-700 transition">Organizadores</a>
+                <a href="contacto.html" class="text-gray-700 hover:text-indigo-700 transition">Contacto</a>
+                <a href="arma-tu-evento.html" class="text-indigo-700 hover:text-indigo-800 transition">Arma tu Evento</a>
+            </nav>
+        </div>
+        
+        <!-- Menú móvil -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+            <a href="index.html" class="block py-2 text-gray-700 hover:text-indigo-700">Inicio</a>
+            <a href="eventos.html" class="block py-2 text-gray-700 hover:text-indigo-700">Eventos</a>
+            <a href="artistas.html" class="block py-2 text-gray-700 hover:text-indigo-700">Artistas</a>
+            <a href="rutas.html" class="block py-2 text-gray-700 hover:text-indigo-700">Rutas</a>
+            <a href="organizadores.html" class="block py-2 text-gray-700 hover:text-indigo-700">Organizadores</a>
+            <a href="contacto.html" class="block py-2 text-gray-700 hover:text-indigo-700">Contacto</a>
+            <a href="arma-tu-evento.html" class="block py-2 text-indigo-700 hover:text-indigo-800">Arma tu Evento</a>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-8 mb-16">
+        <!-- Selector de tipo de evento -->
+        <div id="event-types">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">¿Qué tipo de evento deseas organizar?</h2>
+                <p class="text-xl text-gray-600">Selecciona el tipo de evento y te ayudaremos a planificarlo paso a paso</p>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-4">
+                <!-- Boda -->
+                <div class="event-type-card" data-type="boda">
+                    <div class="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col items-center justify-center text-center">
+                        <i class="fas fa-ring event-icon"></i>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Boda</h3>
+                        <p class="text-gray-600">Planifica cada detalle de tu día especial</p>
+                    </div>
+                </div>
+
+                <!-- XV Años -->
+                <div class="event-type-card" data-type="xv">
+                    <div class="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col items-center justify-center text-center">
+                        <i class="fas fa-crown event-icon"></i>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">XV Años</h3>
+                        <p class="text-gray-600">Crea una celebración inolvidable</p>
+                    </div>
+                </div>
+
+                <!-- Cumpleaños -->
+                <div class="event-type-card" data-type="cumpleanos">
+                    <div class="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col items-center justify-center text-center">
+                        <i class="fas fa-birthday-cake event-icon"></i>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Cumpleaños</h3>
+                        <p class="text-gray-600">Organiza una fiesta perfecta</p>
+                    </div>
+                </div>
+
+                <!-- Evento Social -->
+                <div class="event-type-card" data-type="social">
+                    <div class="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col items-center justify-center text-center">
+                        <i class="fas fa-glass-cheers event-icon"></i>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Evento Social</h3>
+                        <p class="text-gray-600">Reuniones, fiestas y celebraciones</p>
+                    </div>
+                </div>
+
+                <!-- Presentación Artística -->
+                <div class="event-type-card" data-type="artistico">
+                    <div class="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col items-center justify-center text-center">
+                        <i class="fas fa-theater-masks event-icon"></i>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Presentación Artística</h3>
+                        <p class="text-gray-600">Conciertos, shows y espectáculos</p>
+                    </div>
+                </div>
+
+                <!-- Consulta Personalizada -->
+                <div class="event-type-card" data-type="consulta">
+                    <div class="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col items-center justify-center text-center">
+                        <i class="fas fa-comments event-icon"></i>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Consulta Personalizada</h3>
+                        <p class="text-gray-600">¿Tienes algo diferente en mente?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenedor principal para el contenido dinámico -->
+        <div id="main-content" class="hidden">
+            <div class="boda-container">
+                <div class="boda-content">
+                    <!-- El contenido se generará dinámicamente aquí -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- Columna 1 -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Vive Aguachica</h3>
+                    <p class="text-gray-400">La plataforma líder para descubrir y promover eventos culturales en Aguachica, Cesar.</p>
+                </div>
+                
+                <!-- Columna 2 -->
+                <div>
+                    <h4 class="font-semibold mb-4">Enlaces Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="eventos.html" class="text-gray-400 hover:text-white transition">Eventos</a></li>
+                        <li><a href="artistas.html" class="text-gray-400 hover:text-white transition">Artistas</a></li>
+                        <li><a href="organizadores.html" class="text-gray-400 hover:text-white transition">Para Organizadores</a></li>
+                        <li><a href="contacto.html" class="text-gray-400 hover:text-white transition">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Columna 3 -->
+                <div>
+                    <h4 class="font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Términos y Condiciones</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Política de Privacidad</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cookies</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Columna 4 -->
+                <div>
+                    <h4 class="font-semibold mb-4">Síguenos</h4>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/viveaguachica" class="text-gray-400 hover:text-white transition" target="_blank" rel="noopener noreferrer">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+                            </svg>
+                        </a>
+                        <a href="https://www.instagram.com/viveaguachica/" class="text-gray-400 hover:text-white transition" target="_blank" rel="noopener noreferrer">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"/>
+                            </svg>
+                        </a>
+                        <a href="https://twitter.com/viveaguachica" class="text-gray-400 hover:text-white transition" target="_blank" rel="noopener noreferrer">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 Vive Aguachica. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="js/event-controller.js"></script>
+    <script>
+        // Menú móvil
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Event listeners para las tarjetas de tipo de evento
+        document.querySelectorAll('.event-type-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const type = this.dataset.type;
+                if (type === 'boda') {
+                    document.getElementById('event-types').classList.add('hidden');
+                    document.getElementById('main-content').classList.remove('hidden');
+                    // Inicializar el controlador de boda
+                    const bodaController = new BodaController();
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

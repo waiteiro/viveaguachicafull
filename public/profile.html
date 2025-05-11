@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Vive Aguachica</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/profile.css">
+</head>
+<body>
+    <div class="container">
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <img id="userAvatar" src="" alt="Foto de perfil">
+                    <button id="editPhotoBtn" class="btn btn-secondary">Cambiar foto</button>
+                </div>
+                <div class="profile-info">
+                    <h1 id="userName"></h1>
+                    <p id="userEmail" class="email"></p>
+                </div>
+            </div>
+
+            <div class="profile-content">
+                <div class="profile-section">
+                    <h2>Información Personal</h2>
+                    <form id="profileForm" class="profile-form">
+                        <div class="form-group">
+                            <label for="displayName">Nombre completo</label>
+                            <input type="text" id="displayName" name="displayName">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bio">Biografía</label>
+                            <textarea id="bio" name="bio" rows="4"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phoneNumber">Teléfono</label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address">Dirección</label>
+                            <input type="text" id="address" name="address">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="city">Ciudad</label>
+                            <input type="text" id="city" name="city">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="state">Estado/Provincia</label>
+                            <input type="text" id="state" name="state">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="country">País</label>
+                            <input type="text" id="country" name="country">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="interests">Intereses (separados por comas)</label>
+                            <input type="text" id="interests" name="interests">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="facebook">Facebook</label>
+                            <input type="url" id="facebook" name="facebook">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="twitter">Twitter</label>
+                            <input type="url" id="twitter" name="twitter">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="instagram">Instagram</label>
+                            <input type="url" id="instagram" name="instagram">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app.js"></script>
+    <!-- Firebase Auth -->
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-auth.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-firestore.js"></script>
+    
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html> 
