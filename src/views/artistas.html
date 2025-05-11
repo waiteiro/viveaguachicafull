@@ -1,0 +1,24 @@
+<!-- views/artistas.html -->
+<header></header>
+<section>
+  <h2 class="text-2xl font-semibold mb-4">Artistas Locales</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white shadow p-4 rounded text-center">
+      <img src="assets/img/artista1.jpg" alt="Artista" class="w-24 h-24 mx-auto rounded-full object-cover" />
+      <h3 class="mt-2 font-bold">Juanka Beats</h3>
+      <p class="text-sm text-gray-600">Productor de música urbana</p>
+    </div>
+    <!-- Más artistas... -->
+  </div>
+</section>
+
+<script>
+  fetch('/src/views/partials/header.html')
+    .then(res => res.text())
+    .then(html => {
+      document.querySelector('header').innerHTML = html;
+      if (window.initHeader) window.initHeader();
+    });
+</script>
+<script src="/src/assets/js/header.js"></script>
+<script src="/src/assets/js/auth.js"></script>

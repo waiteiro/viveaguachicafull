@@ -1,0 +1,257 @@
+/* Estilos para las tarjetas de campeonatos */
+.campeonato-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.campeonato-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.campeonato-header {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.campeonato-header img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.campeonato-category {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(79, 70, 229, 0.9);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.campeonato-content {
+    padding: 1.5rem;
+}
+
+.campeonato-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.campeonato-organizer {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.campeonato-dates {
+    display: flex;
+    justify-content: space-between;
+    color: #4b5563;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.campeonato-teams {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.team-badge {
+    background: #f3f4f6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    color: #4b5563;
+}
+
+/* Estilos para la tabla de posiciones */
+.posiciones-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.posiciones-table th,
+.posiciones-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.posiciones-table th {
+    background: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+}
+
+.posiciones-table tr:hover {
+    background: #f3f4f6;
+}
+
+/* Estilos para el modal de detalles */
+.modal-content {
+    max-height: calc(90vh - 4rem);
+    overflow-y: auto;
+}
+
+.modal-section {
+    margin-bottom: 2rem;
+}
+
+.modal-section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+/* Estilos para los partidos */
+.partido-card {
+    background: #f9fafb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.partido-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.partido-fecha {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.partido-estado {
+    background: #10b981;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+}
+
+.partido-equipos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.partido-equipo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.partido-equipo img {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+}
+
+.partido-marcador {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.partido-info {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Estilos para los jugadores */
+.jugador-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    background: #f9fafb;
+    margin-bottom: 0.5rem;
+}
+
+.jugador-foto {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.jugador-info {
+    flex: 1;
+}
+
+.jugador-nombre {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.jugador-datos {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+/* Estilos para el calendario de partidos */
+.calendario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.dia-partidos {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dia-titulo {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Estilos para el estado del campeonato */
+.estado-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.estado-activo {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.estado-finalizado {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.estado-proximamente {
+    background: #dbeafe;
+    color: #1e40af;
+} 

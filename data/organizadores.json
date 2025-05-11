@@ -1,0 +1,43 @@
+{
+    "organizadores": [
+        {
+            "id": "casa-cultura",
+            "nombre": "Casa de la Cultura",
+            "descripcion": "Institución dedicada a promover el arte y la cultura local. Organiza eventos culturales, talleres y exposiciones durante todo el año.",
+            "imagen": "../images/organizadores/casa-cultura.jpg",
+            "direccion": "Calle 5 #10-20, Aguachica",
+            "telefono": "+57 123 456 7890",
+            "email": "info@casaculturaaguachica.com",
+            "redes_sociales": {
+                "facebook": "https://facebook.com/casaculturaaguachica",
+                "instagram": "https://instagram.com/casaculturaaguachica"
+            }
+        },
+        {
+            "id": "fundacion-arte",
+            "nombre": "Fundación Arte Vivo",
+            "descripcion": "Organización sin fines de lucro que fomenta el desarrollo artístico en la región. Apoya a artistas emergentes y promueve la educación artística.",
+            "imagen": "../images/organizadores/fundacion-arte.jpg",
+            "direccion": "Carrera 8 #15-30, Aguachica",
+            "telefono": "+57 123 456 7891",
+            "email": "contacto@fundacionartevivo.org",
+            "redes_sociales": {
+                "facebook": "https://facebook.com/fundacionartevivo",
+                "instagram": "https://instagram.com/fundacionartevivo"
+            }
+        },
+        {
+            "id": "asociacion-artistas",
+            "nombre": "Asociación de Artistas Locales",
+            "descripcion": "Agrupación que reúne a los artistas de la región para promover el desarrollo cultural y artístico de Aguachica.",
+            "imagen": "../images/organizadores/asociacion-artistas.jpg",
+            "direccion": "Calle 10 #5-15, Aguachica",
+            "telefono": "+57 123 456 7892",
+            "email": "info@asociacionartistasaguachica.com",
+            "redes_sociales": {
+                "facebook": "https://facebook.com/asociacionartistasaguachica",
+                "instagram": "https://instagram.com/asociacionartistasaguachica"
+            }
+        }
+    ]
+} 

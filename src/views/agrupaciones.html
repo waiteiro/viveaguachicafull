@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrupaciones - Vive Aguachica</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .group-card {
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .group-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .group-image {
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px 8px 0 0;
+        }
+        .group-info {
+            padding: 1.5rem;
+        }
+        .group-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+        .group-description {
+            color: #4a5568;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .filter-btn.active {
+            background-color: #4a5568;
+            color: white;
+        }
+        .search-container {
+            position: relative;
+        }
+        .search-container .form-control {
+            padding-right: 40px;
+        }
+        .search-container .btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    </style>
+</head>
+<body>
+    <header></header>
+    <div class="container my-5">
+        <h1 class="mb-4">Agrupaciones Musicales</h1>
+        
+        <!-- Filtros -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="search-container">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Buscar agrupación...">
+                    <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="btn-group float-end">
+                    <button class="btn btn-outline-secondary active" data-filter="all">Todas</button>
+                    <button class="btn btn-outline-secondary" data-filter="vallenato">Vallenato</button>
+                    <button class="btn btn-outline-secondary" data-filter="salsa">Salsa</button>
+                    <button class="btn btn-outline-secondary" data-filter="merengue">Merengue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid de Agrupaciones -->
+        <div class="row" id="groupsContainer">
+            <!-- Las agrupaciones se cargarán dinámicamente aquí -->
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Configuración de Firebase
+        const firebaseConfig = {
+            // Tu configuración de Firebase aquí
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Función para cargar las agrupaciones
+        async function loadGroups(filter = 'all') {
+            const groupsContainer = document.getElementById('groupsContainer');
+            groupsContainer.innerHTML = ''; // Limpiar contenedor
+
+            try {
+                let q = collection(db, 'agrupaciones');
+                
+                if (filter !== 'all') {
+                    q = query(q, where('genero', '==', filter));
+                }
+
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    groupsContainer.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <p class="text-muted">No hay agrupaciones disponibles en este momento.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const group = doc.data();
+                    const groupCard = createGroupCard(doc.id, group);
+                    groupsContainer.appendChild(groupCard);
+                });
+            } catch (error) {
+                console.error('Error al cargar agrupaciones:', error);
+                groupsContainer.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <p class="text-danger">Error al cargar las agrupaciones. Por favor, intenta más tarde.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Función para crear una tarjeta de agrupación
+        function createGroupCard(id, group) {
+            const col = document.createElement('div');
+            col.className = 'col-md-4 mb-4';
+            
+            col.innerHTML = `
+                <div class="card group-card" onclick="window.location.href='agrupaciones/perfil-agrupacion.html?id=${id}'">
+                    <img src="${group.imagenPrincipal || 'https://via.placeholder.com/400x200?text=Sin+imagen'}" 
+                         class="group-image" 
+                         alt="${group.nombre}"
+                         onerror="this.src='https://via.placeholder.com/400x200?text=Error+de+imagen'">
+                    <div class="group-info">
+                        <h3 class="group-title">${group.nombre}</h3>
+                        <p class="group-description">${group.descripcion || 'Sin descripción disponible'}</p>
+                    </div>
+                </div>
+            `;
+            
+            return col;
+        }
+
+        // Cargar todas las agrupaciones al inicio
+        loadGroups();
+
+        // Event listeners para filtros
+        document.querySelectorAll('[data-filter]').forEach(button => {
+            button.addEventListener('click', (e) => {
+                // Actualizar botones activos
+                document.querySelectorAll('[data-filter]').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                e.target.classList.add('active');
+                
+                // Cargar agrupaciones filtradas
+                loadGroups(e.target.dataset.filter);
+            });
+        });
+
+        // Búsqueda
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const cards = document.querySelectorAll('.group-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.group-title').textContent.toLowerCase();
+                const description = card.querySelector('.group-description').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.closest('.col-md-4').style.display = '';
+                } else {
+                    card.closest('.col-md-4').style.display = 'none';
+                }
+            });
+        }
+
+        searchButton.addEventListener('click', performSearch);
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    </script>
+    <script>
+        fetch('/src/views/partials/header.html')
+            .then(res => res.text())
+            .then(html => {
+                document.querySelector('header').innerHTML = html;
+                if (window.initHeader) window.initHeader();
+            });
+    </script>
+    <script src="/src/assets/js/header.js"></script>
+    <script src="/src/assets/js/auth.js"></script>
+</body>
+</html> 

@@ -1,0 +1,128 @@
+{
+    "artistas": [
+        {
+            "id": "carlos-vives",
+            "nombre": "Carlos Vives",
+            "categoria": "Música Vallenata",
+            "bio": "Cantante y compositor colombiano, ganador de múltiples premios Grammy. Reconocido por su fusión de vallenato tradicional con otros géneros musicales.",
+            "imagen": "../images/artistas/carlos-vives/perfil.jpg",
+            "portada": "../images/artistas/carlos-vives/portada.jpg",
+            "redes_sociales": {
+                "facebook": "https://facebook.com/carlosvives",
+                "instagram": "https://instagram.com/carlosvives",
+                "youtube": "https://youtube.com/carlosvives"
+            },
+            "eventos_proximos": [
+                {
+                    "titulo": "Concierto en Vivo",
+                    "fecha": "2024-07-15",
+                    "lugar": "Parque Principal"
+                }
+            ],
+            "contenido": [
+                {
+                    "tipo": "video",
+                    "url": "https://www.youtube.com/embed/VIDEO_ID",
+                    "titulo": "Concierto en Vivo 2023",
+                    "descripcion": "Presentación en el Festival de la Leyenda Vallenata"
+                },
+                {
+                    "tipo": "imagen",
+                    "url": "../images/artistas/carlos-vives/galeria1.jpg",
+                    "titulo": "En el estudio",
+                    "descripcion": "Grabando nuevo material"
+                },
+                {
+                    "tipo": "imagen",
+                    "url": "../images/artistas/carlos-vives/galeria2.jpg",
+                    "titulo": "Con el público",
+                    "descripcion": "Momento especial con los fans"
+                }
+            ]
+        },
+        {
+            "id": "maria-jose",
+            "nombre": "María José",
+            "categoria": "Danza Contemporánea",
+            "bio": "Bailarina profesional especializada en danza contemporánea. Ha participado en numerosos festivales internacionales.",
+            "imagen": "../images/artistas/maria-jose/perfil.jpg",
+            "portada": "../images/artistas/maria-jose/portada.jpg",
+            "redes_sociales": {
+                "facebook": "https://facebook.com/mariajose",
+                "instagram": "https://instagram.com/mariajose"
+            },
+            "eventos_proximos": [
+                {
+                    "titulo": "Espectáculo de Danza",
+                    "fecha": "2024-08-20",
+                    "lugar": "Teatro Municipal"
+                }
+            ],
+            "contenido": [
+                {
+                    "tipo": "video",
+                    "url": "https://www.youtube.com/embed/VIDEO_ID",
+                    "titulo": "Coreografía 'Libertad'",
+                    "descripcion": "Presentación en el Festival Internacional de Danza"
+                },
+                {
+                    "tipo": "imagen",
+                    "url": "../images/artistas/maria-jose/galeria1.jpg",
+                    "titulo": "En el escenario",
+                    "descripcion": "Momento de la presentación"
+                }
+            ]
+        },
+        {
+            "id": "luis-garcia",
+            "nombre": "Luis García",
+            "categoria": "Teatro",
+            "bio": "Actor y director teatral con más de 20 años de experiencia. Fundador de la compañía de teatro local.",
+            "imagen": "../images/artistas/luis-garcia/perfil.jpg",
+            "portada": "../images/artistas/luis-garcia/portada.jpg",
+            "redes_sociales": {
+                "facebook": "https://facebook.com/luisgarcia",
+                "instagram": "https://instagram.com/luisgarcia"
+            },
+            "eventos_proximos": [
+                {
+                    "titulo": "Obra: 'El Último Acto'",
+                    "fecha": "2024-09-10",
+                    "lugar": "Teatro Municipal"
+                }
+            ],
+            "contenido": [
+                {
+                    "tipo": "video",
+                    "url": "https://www.youtube.com/embed/VIDEO_ID",
+                    "titulo": "Fragmento de 'El Último Acto'",
+                    "descripcion": "Escena principal de la obra"
+                },
+                {
+                    "tipo": "imagen",
+                    "url": "../images/artistas/luis-garcia/galeria1.jpg",
+                    "titulo": "En el escenario",
+                    "descripcion": "Momento de la actuación"
+                }
+            ]
+        },
+        {
+            "id": "ana-rodriguez",
+            "nombre": "Ana Rodríguez",
+            "categoria": "Artes Visuales",
+            "bio": "Pintora y escultora local, especializada en arte abstracto. Sus obras han sido expuestas en galerías nacionales.",
+            "imagen": "../images/artistas/ana-rodriguez/perfil.jpg",
+            "redes_sociales": {
+                "facebook": "https://facebook.com/anarodriguez",
+                "instagram": "https://instagram.com/anarodriguez"
+            },
+            "eventos_proximos": [
+                {
+                    "titulo": "Exposición Individual",
+                    "fecha": "2024-10-05",
+                    "lugar": "Galería Municipal"
+                }
+            ]
+        }
+    ]
+}

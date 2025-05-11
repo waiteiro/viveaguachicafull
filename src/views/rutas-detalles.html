@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Una Parada por la Quinta - Vive Aguachica</title>
+    <meta name="description" content="Explora la emblemática Quinta de Aguachica, un lugar lleno de historia, arquitectura colonial y jardines tradicionales.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center w-full md:w-auto mb-4 md:mb-0">
+                <a href="../index.html" class="flex items-center">
+                    <img src="../images/logos/logo.svg" alt="Vive Aguachica" class="w-10 h-10">
+                    <span class="ml-2 text-xl font-bold text-indigo-800">Vive Aguachica</span>
+                </a>
+                
+                <button id="menu-toggle" class="md:hidden focus:outline-none ml-auto">
+                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="search-container" class="relative w-full md:w-1/3 mb-4 md:mb-0">
+                <form id="search-form" class="flex">
+                    <input type="text" id="search-input" placeholder="Buscar eventos o artistas..." 
+                        class="w-full border border-gray-300 rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+            
+            <nav class="hidden md:flex space-x-8">
+                <a href="../index.html" class="text-gray-700 hover:text-indigo-700 transition">Inicio</a>
+                <a href="../eventos.html" class="text-gray-700 hover:text-indigo-700 transition">Eventos</a>
+                <a href="../artistas.html" class="text-gray-700 hover:text-indigo-700 transition">Artistas</a>
+                <a href="../rutas.html" class="text-indigo-700 font-medium hover:text-indigo-900 transition">Rutas</a>
+                <a href="../organizadores.html" class="text-gray-700 hover:text-indigo-700 transition">Organizadores</a>
+                <a href="../contacto.html" class="text-gray-700 hover:text-indigo-700 transition">Contacto</a>
+            </nav>
+        </div>
+        
+        <!-- Menú móvil -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+            <a href="../index.html" class="block py-2 text-gray-700 hover:text-indigo-700">Inicio</a>
+            <a href="../eventos.html" class="block py-2 text-gray-700 hover:text-indigo-700">Eventos</a>
+            <a href="../artistas.html" class="block py-2 text-gray-700 hover:text-indigo-700">Artistas</a>
+            <a href="../rutas.html" class="block py-2 text-indigo-700 font-medium">Rutas</a>
+            <a href="../organizadores.html" class="block py-2 text-gray-700 hover:text-indigo-700">Organizadores</a>
+            <a href="../contacto.html" class="block py-2 text-gray-700 hover:text-indigo-700">Contacto</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="relative h-96">
+        <img src="../images/rutas/quinta-hero.jpg" alt="Una Parada por la Quinta" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="text-center text-white">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Una Parada por la Quinta</h1>
+                <p class="text-xl">Un recorrido por la historia y arquitectura colonial de Aguachica</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Detalles principales -->
+            <div class="md:col-span-2 bg-white rounded-lg shadow-md p-8">
+                <h2 class="text-3xl font-bold mb-6">Sobre la Ruta</h2>
+                <p class="text-gray-700 mb-6">
+                    La Quinta es uno de los lugares más emblemáticos de Aguachica, un testimonio vivo de la arquitectura 
+                    colonial y la historia de la ciudad. Este recorrido te permite explorar sus hermosos jardines, 
+                    admirar su arquitectura histórica y conocer las fascinantes historias que guardan sus paredes.
+                </p>
+
+                <h3 class="text-2xl font-semibold mb-4">Puntos de Interés</h3>
+                <ul class="list-disc list-inside mb-6 text-gray-700">
+                    <li>Jardines Principales - Flora local y diseño colonial</li>
+                    <li>Salón de los Espejos - Arquitectura histórica</li>
+                    <li>Galería de Arte - Exposiciones temporales</li>
+                    <li>Patio Central - Centro de eventos culturales</li>
+                </ul>
+
+                <h3 class="text-2xl font-semibold mb-4">Recomendaciones</h3>
+                <ul class="list-disc list-inside mb-6 text-gray-700">
+                    <li>Calzado cómodo</li>
+                    <li>Cámara fotográfica</li>
+                    <li>Respetar las normas del lugar</li>
+                    <li>Mantener silencio en áreas designadas</li>
+                    <li>No tocar objetos históricos</li>
+                </ul>
+
+                <!-- Galería de Imágenes -->
+                <h3 class="text-2xl font-semibold mb-4">Galería</h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <img src="../images/rutas/quinta-1.jpg" alt="Jardines de la Quinta" class="rounded-lg">
+                    <img src="../images/rutas/quinta-2.jpg" alt="Salón de los Espejos" class="rounded-lg">
+                    <img src="../images/rutas/quinta-3.jpg" alt="Patio Central" class="rounded-lg">
+                </div>
+            </div>
+
+            <!-- Sidebar con información práctica -->
+            <div class="space-y-6">
+                <!-- Información básica -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4">Información Práctica</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-center">
+                            <i class="fas fa-clock w-6"></i>
+                            <span class="ml-2">Duración: 3 horas</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-walking w-6"></i>
+                            <span class="ml-2">Dificultad: Baja</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-map-marker-alt w-6"></i>
+                            <span class="ml-2">Recorrido: Interior</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-users w-6"></i>
+                            <span class="ml-2">Grupos: Máx. 15 personas</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Reservas -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4">Reservas</h3>
+                    <p class="text-gray-700 mb-4">
+                        Reserva tu visita guiada a la Quinta. Incluye guía especializado en historia local.
+                    </p>
+                    <a href="../contacto.html" class="block text-center bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition">
+                        Reservar Ahora
+                    </a>
+                </div>
+
+                <!-- Ubicación -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4">Ubicación</h3>
+                    <div class="aspect-w-16 aspect-h-9">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.7123456789012!2d-73.61234567890123!3d8.123456789012345!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOMKwMDcnMzQuNCJOIDczwrAzNic0NC40Ilc!5e0!3m2!1ses!2sco!4v1234567890123"
+                            width="100%" 
+                            height="300" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h4 class="text-xl font-bold mb-4">Vive Aguachica</h4>
+                    <p class="text-gray-400">
+                        Descubre la riqueza cultural y natural de nuestra hermosa ciudad.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold mb-4">Enlaces Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="../eventos.html" class="text-gray-400 hover:text-white">Eventos</a></li>
+                        <li><a href="../artistas.html" class="text-gray-400 hover:text-white">Artistas</a></li>
+                        <li><a href="../rutas.html" class="text-gray-400 hover:text-white">Rutas</a></li>
+                        <li><a href="../contacto.html" class="text-gray-400 hover:text-white">Contacto</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Términos y Condiciones</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Política de Privacidad</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Cookies</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold mb-4">Síguenos</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Vive Aguachica. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 

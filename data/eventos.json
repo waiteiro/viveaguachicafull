@@ -1,0 +1,102 @@
+{
+    "eventos": [
+        {
+            "id": "concierto-vallenato",
+            "titulo": "Gran Concierto Vallenato",
+            "categoria": "musica",
+            "descripcion": "Disfruta de una noche llena de música vallenata con los mejores exponentes de la región. Una experiencia única con artistas reconocidos.",
+            "imagen": "images/eventos/evento1.jpg",
+            "fecha": "2025-04-15",
+            "hora": "18:00",
+            "lugar": "Parque Principal, Aguachica",
+            "precio": "Gratis",
+            "capacidad": 5000,
+            "artistas": ["artista1", "artista2"]
+        },
+        {
+            "id": "obra-magico-mundo",
+            "titulo": "Obra: El Mágico Mundo",
+            "categoria": "arte",
+            "descripcion": "Obra teatral infantil que transportará a los niños y sus familias a un universo lleno de fantasía y aventuras.",
+            "imagen": "images/eventos/evento2.jpg",
+            "fecha": "2025-05-20",
+            "hora": "15:00",
+            "lugar": "Casa de la Cultura, Aguachica",
+            "precio": "$10,000",
+            "capacidad": 200
+        },
+        {
+            "id": "feria-gastronomica",
+            "titulo": "Feria Gastronómica",
+            "categoria": "gastronomia",
+            "descripcion": "Prueba los platos típicos de la región en esta gran feria gastronómica. Descubre sabores auténticos y tradiciones culinarias.",
+            "imagen": "images/eventos/evento3.jpg",
+            "fecha": "2025-06-10",
+            "hora": "Todo el día",
+            "lugar": "Plaza de Mercado, Aguachica",
+            "precio": "$5,000",
+            "capacidad": 1000
+        },
+        {
+            "id": "torneo-futbol",
+            "titulo": "Torneo de Fútbol",
+            "categoria": "deporte",
+            "descripcion": "Gran torneo interbarrios de fútbol con premios para los ganadores. Participa y demuestra el talento deportivo de tu barrio.",
+            "imagen": "images/eventos/evento4.jpg",
+            "fecha": "2025-06-24",
+            "hora": "08:00",
+            "lugar": "Estadio Municipal, Aguachica",
+            "precio": "$2,000",
+            "capacidad": 500
+        },
+        {
+            "id": "taller-pintura",
+            "titulo": "Taller de Pintura",
+            "categoria": "arte",
+            "descripcion": "Aprende técnicas básicas de pintura al óleo con artistas locales. Materiales incluidos en el precio.",
+            "imagen": "images/eventos/evento5.jpg",
+            "fecha": "2025-07-05",
+            "hora": "14:00",
+            "lugar": "Galería de Arte, Aguachica",
+            "precio": "$15,000",
+            "capacidad": 20
+        },
+        {
+            "id": "conferencia-emprendimiento",
+            "titulo": "Conferencia: Emprendimiento",
+            "categoria": "educacion",
+            "descripcion": "Aprende estrategias para emprender con éxito en la región. Conferencia dictada por expertos en negocios.",
+            "imagen": "images/eventos/evento6.jpg",
+            "fecha": "2025-07-28",
+            "hora": "17:00",
+            "lugar": "Cámara de Comercio, Aguachica",
+            "precio": "Gratis",
+            "capacidad": 100
+        },
+        {
+            "id": "festival-cultural",
+            "titulo": "Festival Cultural de Primavera",
+            "categoria": "cultural",
+            "descripcion": "Celebra la llegada de la primavera con música en vivo, danzas tradicionales y exposiciones artísticas.",
+            "imagen": "images/eventos/evento7.jpg",
+            "fecha": "2025-08-22",
+            "hora": "16:00",
+            "lugar": "Plaza Central, Aguachica",
+            "precio": "Gratis",
+            "capacidad": 1000
+        },
+        {
+            "id": "festival-cultural2",
+            "titulo": "Festival Cultural de Primavera",
+            "categoria": "cultural",
+            "descripcion": "Celebra la llegada de la primavera con música en vivo, danzas tradicionales y exposiciones artísticas.",
+            "imagen": "images/eventos/evento7.jpg",
+            "fecha": "2025-08-22",
+            "hora": "16:00",
+            "lugar": "Plaza Central, Aguachica",
+            "precio": "Gratis",
+            "capacidad": 1000
+        }
+        
+    ]
+}

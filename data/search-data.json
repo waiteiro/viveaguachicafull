@@ -1,0 +1,86 @@
+{
+    "artistas": [
+        {
+            "id": "carlos-vives",
+            "nombre": "Carlos Vives",
+            "categoria": "Música Vallenata",
+            "bio": "Cantante y compositor colombiano, ganador de múltiples premios Grammy. Reconocido por su fusión de vallenato tradicional con otros géneros musicales.",
+            "imagen": "../images/artistas/carlos-vives/perfil.jpg"
+        },
+        {
+            "id": "maria-jose",
+            "nombre": "María José",
+            "categoria": "Danza Contemporánea",
+            "bio": "Bailarina profesional especializada en danza contemporánea. Ha participado en numerosos festivales internacionales.",
+            "imagen": "../images/artistas/maria-jose/perfil.jpg"
+        },
+        {
+            "id": "luis-garcia",
+            "nombre": "Luis García",
+            "categoria": "Teatro",
+            "bio": "Actor y director teatral con más de 20 años de experiencia. Fundador de la compañía de teatro local.",
+            "imagen": "../images/artistas/luis-garcia/perfil.jpg"
+        },
+        {
+            "id": "ana-rodriguez",
+            "nombre": "Ana Rodríguez",
+            "categoria": "Artes Visuales",
+            "bio": "Pintora y escultora local, especializada en arte abstracto. Sus obras han sido expuestas en galerías nacionales.",
+            "imagen": "../images/artistas/ana-rodriguez/perfil.jpg"
+        }
+    ],
+    "eventos": [
+        {
+            "id": "festival-vallenato",
+            "titulo": "Festival Vallenato",
+            "categoria": "Música",
+            "descripcion": "Festival anual de música vallenata que reúne a los mejores exponentes del género.",
+            "imagen": "../images/eventos/festival-vallenato.jpg",
+            "fecha": "2024-07-15"
+        },
+        {
+            "id": "exposicion-artesanal",
+            "titulo": "Exposición Artesanal",
+            "categoria": "Artesanías",
+            "descripcion": "Exposición de artesanías tradicionales de la región, con demostraciones en vivo.",
+            "imagen": "../images/eventos/exposicion-artesanal.jpg",
+            "fecha": "2024-08-20"
+        },
+        {
+            "id": "festival-danza",
+            "titulo": "Festival de Danza Contemporánea",
+            "categoria": "Danza",
+            "descripcion": "Evento anual que reúne a las mejores compañías de danza contemporánea del país.",
+            "imagen": "../images/eventos/festival-danza.jpg",
+            "fecha": "2024-09-10"
+        },
+        {
+            "id": "exposicion-pintura",
+            "titulo": "Exposición de Pintura Local",
+            "categoria": "Artes Visuales",
+            "descripcion": "Exposición colectiva de artistas locales, mostrando las últimas tendencias en pintura.",
+            "imagen": "../images/eventos/exposicion-pintura.jpg",
+            "fecha": "2024-10-05"
+        }
+    ],
+    "organizadores": [
+        {
+            "id": "casa-cultura",
+            "nombre": "Casa de la Cultura",
+            "descripcion": "Institución dedicada a promover el arte y la cultura local.",
+            "imagen": "images/organizadores/casa-cultura.jpg"
+        },
+        {
+            "id": "fundacion-arte",
+            "nombre": "Fundación Arte Vivo",
+            "descripcion": "Organización sin fines de lucro que fomenta el desarrollo artístico.",
+            "imagen": "images/organizadores/fundacion-arte.jpg"
+        },
+        {
+            "nombre": "Asociación de Artistas Locales",
+            "slug": "asociacion-artistas",
+            "descripcion": "Agrupación que reúne a los artistas de la región.",
+            "imagen": "images/organizadores/asociacion-artistas.jpg"
+        }
+    ]
+} 

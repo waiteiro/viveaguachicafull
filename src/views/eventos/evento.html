@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evento | Vive Aguachica</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/main.js" defer></script>
+    <script src="../js/eventos.js" defer></script>
+    <script src="../js/evento.js" defer></script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <header></header>
+    <main>
+        <!-- Portada del evento -->
+        <div class="relative h-64 md:h-80 lg:h-96 w-full bg-gray-300">
+            <img id="event-cover" src="" alt="Portada del evento" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white">
+                <h1 id="event-title" class="text-3xl md:text-4xl font-bold mb-2"></h1>
+                <div class="flex flex-wrap items-center gap-4 text-sm md:text-base">
+                    <button id="event-date-btn" class="underline hover:text-indigo-200 transition-colors"></button>
+                    <button id="event-location-btn" class="underline hover:text-indigo-200 transition-colors"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido principal en dos columnas -->
+        <div class="evento-detalle-container container grid grid-cols-1 lg:grid-cols-3 gap-8 py-8">
+            <!-- Columna principal -->
+            <div class="col-span-2 flex flex-col gap-8">
+                <!-- Descripción -->
+                <section class="bg-white rounded-xl shadow-lg p-6 md:p-8" id="event-description-section">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">Sobre el Evento</h2>
+                    <div id="event-description" class="prose prose-indigo max-w-none"></div>
+                    <div class="flex items-center space-x-4 mt-4">
+                        ${evento.socialMedia?.facebook ? `
+                            <a href="${evento.socialMedia.facebook}" target="_blank" class="text-blue-600 hover:text-blue-800">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                        ` : ''}
+                        ${evento.socialMedia?.instagram ? `
+                            <a href="${evento.socialMedia.instagram}" target="_blank" class="text-pink-600 hover:text-pink-800">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        ` : ''}
+                        ${evento.socialMedia?.youtube ? `
+                            <a href="${evento.socialMedia.youtube}" target="_blank" class="text-red-600 hover:text-red-800">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        ` : ''}
+                        ${evento.socialMedia?.website ? `
+                            <a href="${evento.socialMedia.website}" target="_blank" class="text-gray-600 hover:text-gray-800">
+                                <i class="fas fa-globe"></i>
+                            </a>
+                        ` : ''}
+                    </div>
+                </section>
+                <!-- Galería -->
+                <section id="event-gallery-section" class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">Galería</h2>
+                    <div id="event-gallery" class="flex space-x-4 overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory"></div>
+                </section>
+                <!-- Artistas participantes -->
+                <section id="event-artists-section" class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">Artistas Participantes</h2>
+                    <div id="event-artists" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+                </section>
+                <!-- Agrupaciones participantes -->
+                <section id="event-groups-section" class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">Agrupaciones Participantes</h2>
+                    <div id="event-groups" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                </section>
+                <!-- Requisitos -->
+                <section id="event-requirements-section" class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">Requisitos</h2>
+                    <div id="event-requirements" class="space-y-2"></div>
+                </section>
+                <!-- Información adicional -->
+                <section id="event-extra-section" class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">Información Adicional</h2>
+                    <div id="event-extra" class="space-y-2"></div>
+                </section>
+            </div>
+            <!-- Columna lateral -->
+            <aside class="col-span-1 flex flex-col gap-8">
+                <!-- Información clave -->
+                <section class="bg-white rounded-xl shadow-lg p-6 md:p-8" id="event-info-section">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">Información del Evento</h2>
+                    <div id="event-info" class="space-y-4"></div>
+                </section>
+                <!-- Organizador -->
+                <section class="bg-white rounded-xl shadow-lg p-6 md:p-8" id="event-organizer-section">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">Organizador</h2>
+                    <div id="event-organizer" class="space-y-2"></div>
+                </section>
+                <!-- Mapa de ubicación -->
+                <section class="bg-white rounded-xl shadow-lg p-6 md:p-8" id="event-map-section">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">Ubicación</h2>
+                    <div id="event-map" class="w-full h-56 rounded-lg overflow-hidden"></div>
+                </section>
+                <!-- Redes sociales -->
+                <section class="bg-white rounded-xl shadow-lg p-6 md:p-8" id="event-social-section">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">Redes y Enlaces</h2>
+                    <div id="event-social" class="flex items-center space-x-4"></div>
+                </section>
+            </aside>
+        </div>
+    </main>
+    <footer class="bg-gray-800 text-white py-12"></footer>
+    <script type="module">
+    import { db } from '../../assets/js/firebase.js';
+    import { doc, getDoc, collection, getDocs } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js';
+
+    async function cargarDetalleEvento() {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        if (!id) return;
+        const ref = doc(db, 'events', id);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) return;
+        const evento = snap.data();
+        // Portada
+        document.getElementById('event-cover').src = evento.imageUrl || '../img/evento-default.jpg';
+        document.getElementById('event-title').textContent = evento.title || '';
+        document.getElementById('event-date-btn').textContent = evento.fechaInicio && evento.fechaInicio.toDate ? evento.fechaInicio.toDate().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '';
+        document.getElementById('event-location-btn').textContent = evento.location || '';
+        // Descripción
+        document.getElementById('event-description').textContent = evento.description || '';
+        // Galería
+        const galeria = evento.gallery || [];
+        const galeriaCont = document.getElementById('event-gallery');
+        galeriaCont.innerHTML = '';
+        galeria.forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            img.className = 'w-40 h-40 object-cover rounded shadow mr-2';
+            galeriaCont.appendChild(img);
+        });
+        // Artistas participantes
+        const artistasCont = document.getElementById('event-artists');
+        artistasCont.innerHTML = '';
+        if (evento.artists && evento.artists.length) {
+            for (const artistId of evento.artists) {
+                const artistRef = doc(db, 'artists', artistId);
+                const artistSnap = await getDoc(artistRef);
+                if (artistSnap.exists()) {
+                    const artist = artistSnap.data();
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center gap-3 bg-indigo-50 rounded-lg p-3 shadow';
+                    div.innerHTML = `
+                        <a href="/src/views/artistas/perfil.html?id=${artistId}" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                            <img src="${artist.imageUrl || '../img/artist-default.jpg'}" class="w-16 h-16 object-cover rounded-full">
+                            <div>
+                                <div class='font-bold text-indigo-700'>${artist.name}</div>
+                                <div class='text-sm text-gray-600'>${artist.category || ''}</div>
+                            </div>
+                        </a>
+                    `;
+                    artistasCont.appendChild(div);
+                }
+            }
+        }
+
+        // Agrupaciones participantes
+        const gruposCont = document.getElementById('event-groups');
+        gruposCont.innerHTML = '';
+        if (evento.groups && evento.groups.length) {
+            for (const groupId of evento.groups) {
+                const groupRef = doc(db, 'agrupaciones', groupId);
+                const groupSnap = await getDoc(groupRef);
+                if (groupSnap.exists()) {
+                    const group = groupSnap.data();
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center gap-3 bg-indigo-50 rounded-lg p-3 shadow';
+                    div.innerHTML = `
+                        <a href="/src/views/agrupaciones/perfil-agrupacion.html?id=${groupId}" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                            <img src="${group.imagen || '../img/group-default.jpg'}" class="w-16 h-16 object-cover rounded-full">
+                            <div>
+                                <div class='font-bold text-indigo-700'>${group.nombre}</div>
+                                <div class='text-sm text-gray-600'>${group.categoria || ''}</div>
+                            </div>
+                        </a>
+                    `;
+                    gruposCont.appendChild(div);
+                }
+            }
+        } else {
+            gruposCont.innerHTML = '<p class="text-gray-500 text-center">No hay agrupaciones registradas para este evento.</p>';
+        }
+    }
+    document.addEventListener('DOMContentLoaded', cargarDetalleEvento);
+    </script>
+    <script>
+      fetch('/src/views/partials/header.html')
+        .then(res => res.text())
+        .then(html => {
+          document.querySelector('header').innerHTML = html;
+          if (window.initHeader) window.initHeader();
+        });
+    </script>
+    <script src="/src/assets/js/header.js"></script>
+    <script src="/src/assets/js/auth.js"></script>
+</body>
+</html> 

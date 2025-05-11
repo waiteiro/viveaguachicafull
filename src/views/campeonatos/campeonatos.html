@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Campeonatos deportivos en Aguachica - Sigue los mejores torneos de fútbol y otros deportes en tu ciudad">
+    <title>Campeonatos Deportivos | Vive Aguachica</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="css/campeonatos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/main.js" defer></script>
+    <script src="js/campeonatos.js" defer></script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center w-full md:w-auto mb-4 md:mb-0">
+                <a href="../index.html" class="flex items-center">
+                    <img src="../images/logos/logo.svg" alt="Vive Aguachica" class="w-10 h-10">
+                    <span class="ml-2 text-xl font-bold text-indigo-800">Vive Aguachica</span>
+                </a>
+                
+                <button id="menu-toggle" class="md:hidden focus:outline-none ml-auto">
+                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <nav class="hidden md:flex space-x-8">
+                <a href="../index.html" class="text-gray-700 hover:text-indigo-700 transition">Inicio</a>
+                <a href="../eventos.html" class="text-gray-700 hover:text-indigo-700 transition">Eventos</a>
+                <a href="campeonatos.html" class="text-indigo-700 font-medium hover:text-indigo-900 transition">Campeonatos</a>
+                <a href="../artistas.html" class="text-gray-700 hover:text-indigo-700 transition">Artistas</a>
+                <a href="../rutas.html" class="text-gray-700 hover:text-indigo-700 transition">Rutas</a>
+                <a href="../organizadores.html" class="text-gray-700 hover:text-indigo-700 transition">Organizadores</a>
+                <a href="../contacto.html" class="text-gray-700 hover:text-indigo-700 transition">Contacto</a>
+            </nav>
+        </div>
+        
+        <!-- Menú móvil -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+            <a href="../index.html" class="block py-2 text-gray-700 hover:text-indigo-700">Inicio</a>
+            <a href="../eventos.html" class="block py-2 text-gray-700 hover:text-indigo-700">Eventos</a>
+            <a href="campeonatos.html" class="block py-2 text-indigo-700 font-medium">Campeonatos</a>
+            <a href="../artistas.html" class="block py-2 text-gray-700 hover:text-indigo-700">Artistas</a>
+            <a href="../rutas.html" class="block py-2 text-gray-700 hover:text-indigo-700">Rutas</a>
+            <a href="../organizadores.html" class="block py-2 text-gray-700 hover:text-indigo-700">Organizadores</a>
+            <a href="../contacto.html" class="block py-2 text-gray-700 hover:text-indigo-700">Contacto</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl md:text-4xl font-bold mb-8 text-gray-800">Campeonatos Deportivos</h1>
+        
+        <!-- Filtros de Campeonatos -->
+        <div class="overflow-x-auto mb-8 -mx-4 px-4 hide-scrollbar">
+            <div class="flex gap-4 min-w-max">
+                <button class="category-btn active bg-indigo-100 text-indigo-600 px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-300" data-category="todos">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                    Todos
+                </button>
+                <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-300" data-category="futbol">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    Fútbol
+                </button>
+                <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-300" data-category="micro">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    Fútbol 8
+                </button>
+            </div>
+        </div>
+
+        <!-- Listado de Campeonatos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="campeonatos-container">
+            <!-- Los campeonatos se cargarán dinámicamente desde campeonatos.js -->
+        </div>
+
+        <!-- Modal para Detalles del Campeonato -->
+        <div id="campeonato-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-6 w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto">
+                <button id="close-modal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                <div id="modal-content">
+                    <!-- El contenido del modal se cargará dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Vive Aguachica</h3>
+                    <p class="text-gray-400">La plataforma líder para descubrir y promover eventos culturales y deportivos en Aguachica, Cesar.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Enlaces Rápidos</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../index.html" class="text-gray-400 hover:text-white">Inicio</a></li>
+                        <li><a href="../eventos.html" class="text-gray-400 hover:text-white">Eventos</a></li>
+                        <li><a href="campeonatos.html" class="text-gray-400 hover:text-white">Campeonatos</a></li>
+                        <li><a href="../artistas.html" class="text-gray-400 hover:text-white">Artistas</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contacto</h3>
+                    <ul class="space-y-2">
+                        <li class="text-gray-400">Email: info@viveaguachica.com</li>
+                        <li class="text-gray-400">Tel: +57 123 456 7890</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Síguenos</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Vive Aguachica. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 

@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Vive Aguachica</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="admin-custom.css"> <!-- Enlace al CSS personalizado -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js"></script>
+    <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
+    <style>
+        body {
+            background: #f0f2f5; /* Actualizado con el de admin-custom.css */
+            font-family: 'Inter', sans-serif;
+        }
+        .admin-main {
+            display: flex;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .admin-form-col {
+            flex: 1 1 0%;
+            min-width: 340px;
+            max-width: 520px;
+            background: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 2px 16px 0 rgba(0,0,0,0.07);
+            padding: 2rem 2rem 1.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .admin-list-col {
+            flex: 0 0 380px;
+            max-width: 380px;
+            background: #f9fafb;
+            border-radius: 1rem;
+            box-shadow: 0 2px 16px 0 rgba(0,0,0,0.04);
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+            height: 90vh;
+            position: sticky;
+            top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .admin-list-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+        .admin-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .admin-list-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 4px 0 rgba(0,0,0,0.04);
+            padding: 0.75rem 1rem;
+            transition: box-shadow 0.2s;
+        }
+        .admin-list-item:hover {
+            box-shadow: 0 4px 16px 0 rgba(0,0,0,0.08);
+        }
+        .admin-list-img {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            background: #e5e7eb;
+        }
+        .admin-list-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .admin-list-title-sm {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .admin-list-desc {
+            font-size: 0.85rem;
+            color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .admin-list-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .admin-list-actions button {
+            background: #f3f4f6;
+            border: none;
+            border-radius: 0.4rem;
+            padding: 0.3rem 0.7rem;
+            font-size: 0.9rem;
+            color: #6366f1;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .admin-list-actions button:hover {
+            background: #6366f1;
+            color: #fff;
+        }
+        #artistGalleryPreview img {
+            width: 56px;
+            height: 56px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            margin-right: 0.3rem;
+            margin-bottom: 0.3rem;
+            box-shadow: 0 1px 4px 0 rgba(0,0,0,0.07);
+        }
+        .admin-notification {
+            position: fixed;
+            top: 1.5rem;
+            right: 2rem;
+            background: #6366f1;
+            color: #fff;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            box-shadow: 0 2px 16px 0 rgba(99,102,241,0.15);
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .admin-notification.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-main-container"> <!-- Contenedor general por si se necesita un margen o fondo global -->
+        <div class="admin-main"> <!-- Contenedor Flex para las dos columnas -->
+            
+            <!-- Columna Izquierda: Formularios y Pestañas -->
+            <div class="admin-form-col">
+                <h1 class="mb-4 site-admin-title">Panel de Administración</h1>
+        <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="add-site-tab" data-bs-toggle="tab" data-bs-target="#addSitePane" type="button" role="tab" aria-controls="addSitePane" aria-selected="true">Añadir Sitio</button>
+            </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="events-tab" data-bs-toggle="tab" data-bs-target="#eventsPane" type="button" role="tab" aria-controls="eventsPane" aria-selected="false">Eventos</button>
+            </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="artists-tab" data-bs-toggle="tab" data-bs-target="#artistsPane" type="button" role="tab" aria-controls="artistsPane" aria-selected="false">Artistas</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="groups-tab" data-bs-toggle="tab" data-bs-target="#groupsPane" type="button" role="tab" aria-controls="groupsPane" aria-selected="false">Agrupaciones</button>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-3" id="adminTabContent">
+                    <!-- Pestaña: Añadir Sitio -->
+                    <div class="tab-pane fade show active" id="addSitePane" role="tabpanel" aria-labelledby="add-site-tab">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title" id="siteFormTitle">Añadir Nuevo Sitio</h5>
+                                <form id="addSiteForm">
+                                    <input type="hidden" id="editingSiteId" name="editingSiteId">
+                                    <fieldset class="mb-4">
+                                        <legend>🧾 Información General</legend>
+                                        <div class="mb-3"><label for="siteName" class="form-label">Nombre del sitio:</label><input type="text" class="form-control" id="siteName" name="siteName" required></div>
+                                        <div class="mb-3"><label for="shortDescription" class="form-label">Descripción breve:</label><textarea class="form-control" id="shortDescription" name="shortDescription" rows="2"></textarea></div>
+                                        <div class="mb-3"><label for="fullDescription" class="form-label">Descripción completa:</label><textarea class="form-control" id="fullDescription" name="fullDescription" rows="4"></textarea></div>
+                                        <div class="mb-3"><label for="mainCategory" class="form-label">Categoría principal:</label>
+                                            <select class="form-select" id="mainCategory" name="mainCategory" required>
+                                                <option value="" disabled selected>Selecciona...</option>
+                                                <optgroup label="🏞️ Turismo y Naturaleza">
+                                                    <option value="Parque natural">Parque natural</option>
+                                                    <option value="Ecoparque">Ecoparque</option>
+                                                    <option value="Mirador">Mirador</option>
+                                                    <option value="Río y balneario">Río y balneario</option>
+                                                    <option value="Río">Río</option>
+                                                    <option value="Sendero ecológico">Sendero ecológico</option>
+                                                    <option value="Zona de camping">Zona de camping</option>
+                                                    <option value="Reserva natural">Reserva natural</option>
+                                                    <option value="Jardín botánico">Jardín botánico</option>
+                                                </optgroup>
+                                                <optgroup label="🏛️ Cultura e Historia">
+                                                    <option value="Monumento histórico">Monumento histórico</option>
+                                                    <option value="Museo">Museo</option>
+                                                    <option value="Iglesia o templo">Iglesia o templo</option>
+                                                    <option value="Mural / Arte urbano">Mural / Arte urbano</option>
+                                                    <option value="Teatro">Teatro</option>
+                                                    <option value="Casa patrimonial">Casa patrimonial</option>
+                                                    <option value="Plaza principal">Plaza principal</option>
+                                                    <option value="Cementerio histórico">Cementerio histórico</option>
+                                                </optgroup>
+                                                <optgroup label="🎭 Ocio y Entretenimiento">
+                                                    <option value="Cine">Cine</option>
+                                                    <option value="Teatro">Teatro</option>
+                                                    <option value="Salón de eventos">Salón de eventos</option>
+                                                    <option value="Casino">Casino</option>
+                                                    <option value="Discoteca">Discoteca</option>
+                                                    <option value="Bar">Bar</option>
+                                                    <option value="Café cultural">Café cultural</option>
+                                                    <option value="Centro de convenciones">Centro de convenciones</option>
+                                                    <option value="Kiosco o punto de encuentro">Kiosco o punto de encuentro</option>
+                                                </optgroup>
+                                                <optgroup label="🍽️ Gastronomía">
+                                                    <option value="Restaurante">Restaurante</option>
+                                                    <option value="Comida rápida">Comida rápida</option>
+                                                    <option value="Cafetería">Cafetería</option>
+                                                    <option value="Panadería">Panadería</option>
+                                                    <option value="Heladería">Heladería</option>
+                                                    <option value="Juguería">Juguería</option>
+                                                    <option value="Sitio de comida típica">Sitio de comida típica</option>
+                                                    <option value="Food truck">Food truck</option>
+                                                    <option value="Asadero">Asadero</option>
+                                                    <option value="Pizzería">Pizzería</option>
+                                                    <option value="Cevichería">Cevichería</option>
+                                                </optgroup>
+                                                <optgroup label="🛍️ Comercio y Compras">
+                                                    <option value="Centro comercial">Centro comercial</option>
+                                                    <option value="Feria artesanal">Feria artesanal</option>
+                                                    <option value="Plaza de mercado">Plaza de mercado</option>
+                                                    <option value="Supermercado">Supermercado</option>
+                                                    <option value="Tienda de ropa y moda">Tienda de ropa y moda</option>
+                                                    <option value="Tienda de tecnología">Tienda de tecnología</option>
+                                                    <option value="Librería">Librería</option>
+                                                    <option value="Joyería">Joyería</option>
+                                                    <option value="Ferretería">Ferretería</option>
+                                                    <option value="Papelería">Papelería</option>
+                                                </optgroup>
+                                                <optgroup label="🏨 Hospedaje y Estancias">
+                                                    <option value="Hotel">Hotel</option>
+                                                    <option value="Hostal">Hostal</option>
+                                                    <option value="Finca turística">Finca turística</option>
+                                                    <option value="Apartamento amoblado">Apartamento amoblado</option>
+                                                    <option value="Casa campestre">Casa campestre</option>
+                                                    <option value="Zona de glamping">Zona de glamping</option>
+                                                </optgroup>
+                                                <optgroup label="🎓 Educación y Formación">
+                                                    <option value="Universidad">Universidad</option>
+                                                    <option value="Colegio">Colegio</option>
+                                                    <option value="Escuela técnica">Escuela técnica</option>
+                                                    <option value="Academia de música / danza">Academia de música / danza</option>
+                                                    <option value="Centro de idiomas">Centro de idiomas</option>
+                                                    <option value="Biblioteca pública">Biblioteca pública</option>
+                                                </optgroup>
+                                                <optgroup label="🏥 Bienestar y Salud">
+                                                    <option value="Clínica">Clínica</option>
+                                                    <option value="Centro médico">Centro médico</option>
+                                                    <option value="Odontología">Odontología</option>
+                                                    <option value="Spa o centro de estética">Spa o centro de estética</option>
+                                                    <option value="Centro de yoga o meditación">Centro de yoga o meditación</option>
+                                                    <option value="Gimnasio">Gimnasio</option>
+                                                    <option value="Droguería">Droguería</option>
+                                                    <option value="Terapia alternativa">Terapia alternativa</option>
+                                                </optgroup>
+                                                <optgroup label="⚽ Deporte y Recreación">
+                                                    <option value="Cancha de fútbol">Cancha de fútbol</option>
+                                                    <option value="Coliseo">Coliseo</option>
+                                                    <option value="Polideportivo">Polideportivo</option>
+                                                    <option value="Piscina">Piscina</option>
+                                                    <option value="Escuela deportiva">Escuela deportiva</option>
+                                                    <option value="Gimnasio al aire libre">Gimnasio al aire libre</option>
+                                                    <option value="Parque recreativo">Parque recreativo</option>
+                                                    <option value="Pista de skate / BMX">Pista de skate / BMX</option>
+                                                    <option value="Ciclovía">Ciclovía</option>
+                                                </optgroup>
+                                                <optgroup label="🧩 Servicios y Otros">
+                                                    <option value="Salón de eventos">Salón de eventos</option>
+                                                    <option value="Oficina de turismo">Oficina de turismo</option>
+                                                    <option value="Notaría / entidad oficial">Notaría / entidad oficial</option>
+                                                    <option value="Estación de servicio">Estación de servicio</option>
+                                                    <option value="Taller mecánico">Taller mecánico</option>
+                                                    <option value="Parqueadero">Parqueadero</option>
+                                                    <option value="Alcaldía / Gobernación">Alcaldía / Gobernación</option>
+                                                    <option value="Centro comunitario">Centro comunitario</option>
+                                                    <option value="Refugio de animales">Refugio de animales</option>
+                                                </optgroup>
+                                                <optgroup label="🧭 Experiencias y Rutas">
+                                                    <option value="Ruta gastronómica">Ruta gastronómica</option>
+                                                    <option value="Ruta de arte urbano">Ruta de arte urbano</option>
+                                                    <option value="Ruta nocturna">Ruta nocturna</option>
+                                                    <option value="Ruta de café / cacao">Ruta de café / cacao</option>
+                                                    <option value="Recorrido patrimonial">Recorrido patrimonial</option>
+                                                    <option value="City tour">City tour</option>
+                                                    <option value="Ruta deportiva">Ruta deportiva</option>
+                                                    <option value="Caminata al amanecer">Caminata al amanecer</option>
+                                                    <option value="Tour de leyenda urbana">Tour de leyenda urbana</option>
+                                                </optgroup>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3"><label for="subcategoriesTags" class="form-label">Etiquetas (coma):</label><input type="text" class="form-control" id="subcategoriesTags" name="subcategoriesTags"></div>
+                                        
+                                        <!-- Campo Foto Destacada para Sitios -->
+                                        <div class="mb-3">
+                                            <label for="featuredImage" class="form-label">Foto destacada:</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="featuredImage" name="featuredImage" readonly placeholder="URL de Cloudinary...">
+                                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.openCloudinaryWidget('featuredImage', false, null, null, 16/9)">Subir</button>
+                                            </div>
+                                            <div id="featuredImagePreviewSingle" class="mt-2"></div>
+                                        </div>
+                                        
+                                        <!-- Campo Logo para Sitios -->
+                                        <div class="mb-3">
+                                            <label for="logoImage" class="form-label">Logo:</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="logoImage" name="logoImage" readonly placeholder="URL de Cloudinary...">
+                                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.openCloudinaryWidget('logoImage', false, null, null, 1)">Subir</button>
+                                            </div>
+                                            <div id="logoImagePreviewSingle" class="mt-2"></div>
+                                        </div>
+
+                                        <!-- Campo Galería para Sitios -->
+                                        <div class="mb-3">
+                                            <label class="form-label">Galería de Imágenes (Sitio):</label>
+                                            <button type="button" class="btn btn-outline-primary btn-sm d-block mb-2" onclick="window.openCloudinaryWidget(null, true, 'siteGalleryImagesPreview', 'siteGalleryImages')">Añadir a Galería del Sitio</button>
+                                            <input type="hidden" id="siteGalleryImages" name="siteGalleryImages" value="[]">
+                                            <div id="siteGalleryImagesPreview" class="d-flex flex-wrap gap-2"></div>
+                                        </div>
+                                    </fieldset>
+                                    <fieldset>
+                                        <legend>📍 Ubicación</legend>
+                                        <div class="form-group mb-3">
+                                            <label for="exactAddress" class="form-label">Dirección exacta:</label>
+                                            <input type="text" class="form-control" id="exactAddress" name="exactAddress" placeholder="Ej: Calle 10 #5-11">
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 form-group mb-3">
+                                                <label for="latitude" class="form-label">Latitud (mapa):</label>
+                                                <input type="number" step="any" class="form-control" id="latitude" name="latitude" placeholder="Ej: 8.305">
+                                            </div>
+                                            <div class="col-md-6 form-group mb-3">
+                                                <label for="longitude" class="form-label">Longitud (mapa):</label>
+                                                <input type="number" step="any" class="form-control" id="longitude" name="longitude" placeholder="Ej: -73.618">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-12 d-grid">
+                                                <button type="button" class="btn btn-secondary" onclick="calcularCoordenadasSitio()">Calcular Coordenadas</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="neighborhood" class="form-label">Barrio o zona (opcional):</label>
+                                            <input type="text" class="form-control" id="neighborhood" name="neighborhood" placeholder="Ej: Barrio Centro">
+                                        </div>
+                                    </fieldset>
+                                    <fieldset>
+                                        <legend>📅 Horarios y Disponibilidad</legend>
+                                        <p class="form-text">Para los horarios, usa el formato HH:MM - HH:MM (ej: 09:00 - 18:00) o escribe "Cerrado" o "24 horas".</p>
+                                        <div class="row">
+                                            <div class="col-md-6 form-group mb-3"><label for="hoursMonday" class="form-label">Lunes:</label><input type="text" class="form-control" id="hoursMonday" name="hoursMonday" placeholder="09:00-18:00"></div>
+                                            <div class="col-md-6 form-group mb-3"><label for="hoursTuesday" class="form-label">Martes:</label><input type="text" class="form-control" id="hoursTuesday" name="hoursTuesday" placeholder="09:00-18:00"></div>
+                                            <div class="col-md-6 form-group mb-3"><label for="hoursWednesday" class="form-label">Miércoles:</label><input type="text" class="form-control" id="hoursWednesday" name="hoursWednesday" placeholder="Cerrado"></div>
+                                            <div class="col-md-6 form-group mb-3"><label for="hoursThursday" class="form-label">Jueves:</label><input type="text" class="form-control" id="hoursThursday" name="hoursThursday" placeholder="09:00-18:00"></div>
+                                            <div class="col-md-6 form-group mb-3"><label for="hoursFriday" class="form-label">Viernes:</label><input type="text" class="form-control" id="hoursFriday" name="hoursFriday" placeholder="09:00-22:00"></div>
+                                            <div class="col-md-6 form-group mb-3"><label for="hoursSaturday" class="form-label">Sábado:</label><input type="text" class="form-control" id="hoursSaturday" name="hoursSaturday" placeholder="10:00-23:00"></div>
+                                            <div class="col-md-6 form-group mb-3"><label for="hoursSunday" class="form-label">Domingo:</label><input type="text" class="form-control" id="hoursSunday" name="hoursSunday" placeholder="10:00-16:00"></div>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="seasonalOnly" name="seasonalOnly" value="true">
+                                            <label class="form-check-label" for="seasonalOnly">¿Abre solo por temporada o evento específico?</label>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="specialDates" class="form-label">Fechas especiales o cierres programados:</label>
+                                            <textarea class="form-control" id="specialDates" name="specialDates" rows="3" placeholder="Ej: Cerrado el 25 de Diciembre. Abierto hasta media noche en festivos."></textarea>
+                                        </div>
+                                    </fieldset>
+                                     <fieldset>
+                                        <legend>💬 Interacción y Vínculos</legend>
+                                        <div class="form-group mb-3"><label for="phoneNumber" class="form-label">Número de teléfono:</label><input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="+57 3001234567"></div>
+                                        <div class="form-group mb-3"><label for="whatsappNumber" class="form-label">WhatsApp:</label><input type="tel" class="form-control" id="whatsappNumber" name="whatsappNumber" placeholder="+57 3001234567"></div>
+                                        <div class="form-group mb-3"><label for="socialInstagram" class="form-label">Instagram:</label><input type="url" class="form-control" id="socialInstagram" name="socialInstagram" placeholder="https://instagram.com/tusitio"></div>
+                                        <div class="form-group mb-3"><label for="socialFacebook" class="form-label">Facebook:</label><input type="url" class="form-control" id="socialFacebook" name="socialFacebook" placeholder="https://facebook.com/tusitio"></div>
+                                        <div class="form-group mb-3"><label for="socialTikTok" class="form-label">TikTok:</label><input type="url" class="form-control" id="socialTikTok" name="socialTikTok" placeholder="https://tiktok.com/@tusitio"></div>
+                                        <div class="form-group mb-3"><label for="websiteUrl" class="form-label">Sitio web:</label><input type="url" class="form-control" id="websiteUrl" name="websiteUrl" placeholder="https://www.tusitio.com"></div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="hasReservationButton" name="hasReservationButton" value="true">
+                                            <label class="form-check-label" for="hasReservationButton">Habilitar botón de "Reservar"</label>
+                                        </div>
+                                    </fieldset>
+                                    <fieldset>
+                                        <legend>📍 Relación con Eventos y Artistas</legend>
+                                        <div class="form-group mb-3">
+                                            <label for="upcomingEvents" class="form-label">Eventos próximos en este lugar (IDs o nombres, separar por coma):</label>
+                                            <input type="text" class="form-control" id="upcomingEvents" name="upcomingEvents" placeholder="concierto-verano, festival-gastronomico">
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="featuredArtists" class="form-label">Artistas que se presentan o han presentado (IDs o nombres, separar por coma):</label>
+                                            <input type="text" class="form-control" id="featuredArtists" name="featuredArtists" placeholder="artista-local-1, banda-invitada-5">
+                                        </div>
+                                    </fieldset>
+                                    <fieldset>
+                                        <legend>🏷️ Etiquetas Útiles para el Usuario</legend>
+                                        <div class="row">
+                                            <div class="col-md-6 form-group mb-3">
+                                                <label class="form-label d-block">Entrada:</label>
+                                                <div class="form-check form-check-inline"><input class="form-check-input" type="radio" id="entryFree" name="entryType" value="libre"><label class="form-check-label" for="entryFree">Libre</label></div>
+                                                <div class="form-check form-check-inline"><input class="form-check-input" type="radio" id="entryPaid" name="entryType" value="pago"><label class="form-check-label" for="entryPaid">De pago</label></div>
+                                            </div>
+                                            <div class="col-md-6 form-group mb-3">
+                                                <label class="form-label d-block">Público:</label>
+                                                <div class="form-check form-check-inline"><input class="form-check-input" type="radio" id="audienceFamily" name="audienceType" value="familiar"><label class="form-check-label" for="audienceFamily">Familiar</label></div>
+                                                <div class="form-check form-check-inline"><input class="form-check-input" type="radio" id="audienceAdults" name="audienceType" value="solo_adultos"><label class="form-check-label" for="audienceAdults">Solo adultos</label></div>
+                                            </div>
+                                            <div class="col-md-6 form-group mb-3">
+                                                <label class="form-label d-block">Parqueadero:</label>
+                                                <div class="form-check form-check-inline"><input class="form-check-input" type="radio" id="parkingAvailable" name="parking" value="con_parqueadero"><label class="form-check-label" for="parkingAvailable">Con</label></div>
+                                                <div class="form-check form-check-inline"><input class="form-check-input" type="radio" id="noParking" name="parking" value="sin_parqueadero"><label class="form-check-label" for="noParking">Sin</label></div>
+                                                <div class="form-check form-check-inline"><input class="form-check-input" type="radio" id="parkingNA" name="parking" value="na" checked><label class="form-check-label" for="parkingNA">N/A</label></div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6 col-md-4 form-check mb-2 ms-2"><input class="form-check-input" type="checkbox" id="idealForPhotos" name="idealForPhotos" value="true"><label class="form-check-label" for="idealForPhotos">Ideal para fotos</label></div>
+                                            <div class="col-sm-6 col-md-4 form-check mb-2 ms-2"><input class="form-check-input" type="checkbox" id="recommendedByVA" name="recommendedByVA" value="true"><label class="form-check-label" for="recommendedByVA">Recomendado por Vive Aguachica</label></div>
+                                            <div class="col-sm-6 col-md-4 form-check mb-2 ms-2"><input class="form-check-input" type="checkbox" id="accessible" name="accessible" value="true"><label class="form-check-label" for="accessible">Accesible (sillas de ruedas)</label></div>
+                                            <div class="col-sm-6 col-md-4 form-check mb-2 ms-2"><input class="form-check-input" type="checkbox" id="idealForDates" name="idealForDates" value="true"><label class="form-check-label" for="idealForDates">Ideal para citas / romántico</label></div>
+                                            <div class="col-sm-6 col-md-4 form-check mb-2 ms-2"><input class="form-check-input" type="checkbox" id="idealForGroups" name="idealForGroups" value="true"><label class="form-check-label" for="idealForGroups">Ideal para grupos</label></div>
+                                            <div class="col-sm-6 col-md-4 form-check mb-2 ms-2"><input class="form-check-input" type="checkbox" id="petFriendly" name="petFriendly" value="true"><label class="form-check-label" for="petFriendly">Pet-friendly</label></div>
+                                            <div class="col-sm-6 col-md-4 form-check mb-2 ms-2"><input class="form-check-input" type="checkbox" id="naturalEnvironment" name="naturalEnvironment" value="true"><label class="form-check-label" for="naturalEnvironment">Ambiente natural / Al aire libre</label></div>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="usualWeather" class="form-label">Clima habitual (si aplica, para planes al aire libre):</label>
+                                            <input type="text" class="form-control" id="usualWeather" name="usualWeather" placeholder="Ej: Soleado por las mañanas, fresco por las tardes">
+                                        </div>
+                                    </fieldset>
+                                    <fieldset>
+                                        <legend>🧠 Datos Internos (para administración)</legend>
+                                        <div class="form-group mb-3">
+                                            <label for="siteSlug" class="form-label">Slug o ID URL amigable (opcional, se puede autogenerar):</label>
+                                            <input type="text" class="form-control" id="siteSlug" name="siteSlug" placeholder="Ej: cafe-aguachica-centro">
+                                            <small class="form-text text-muted">Si se deja vacío, se podría generar a partir del nombre.</small>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="siteStatus" class="form-label">Estado:</label>
+                                            <select class="form-select" id="siteStatus" name="siteStatus">
+                                                <option value="activo" selected>Activo (Publicado)</option>
+                                                <option value="revision">En Revisión</option>
+                                                <option value="inactivo">Inactivo (Borrador)</option>
+                                            </select>
+                                        </div>
+                                    </fieldset>
+                                    <div class="mt-4 text-end">
+                                        <button type="button" class="btn btn-outline-secondary" id="clearSiteFormBtn">Limpiar / Nuevo</button>
+                                        <button type="submit" class="btn btn-primary" id="submitSiteFormBtn">Añadir Sitio</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+            <!-- Pestaña de Eventos -->
+                    <div class="tab-pane fade" id="eventsPane" role="tabpanel" aria-labelledby="events-tab">
+                <div class="card">
+                    <div class="card-body">
+                                <h5 class="card-title">Crear/Editar Evento</h5>
+                        <form id="eventForm" class="mb-4">
+                            <div class="mb-3">
+                                <label for="eventTitle" class="form-label">Título del Evento</label>
+                                <input type="text" class="form-control" id="eventTitle" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventDescription" class="form-label">Descripción</label>
+                                <textarea class="form-control" id="eventDescription" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventCategory" class="form-label">Categoría</label>
+                                        <select class="form-select" id="eventCategory" required>
+                                    <option value="">Selecciona una categoría</option>
+                                    <option value="Alternativos">Alternativos</option>
+                                    <option value="Ambiental">Ambiental</option>
+                                    <option value="Arte">Arte</option>
+                                    <option value="Cultura">Cultura</option>
+                                    <option value="Deporte">Deporte</option>
+                                    <option value="Educación">Educación</option>
+                                    <option value="Entretenimiento">Entretenimiento</option>
+                                    <option value="Gastronomía">Gastronomía</option>
+                                    <option value="Infantil">Infantil</option>
+                                    <option value="Mascotas">Mascotas</option>
+                                    <option value="Moda">Moda</option>
+                                    <option value="Música">Música</option>
+                                    <option value="Otros">Otros</option>
+                                    <option value="Político">Político</option>
+                                    <option value="Privados">Privados</option>
+                                    <option value="Religión">Religión</option>
+                                    <option value="Salud">Salud</option>
+                                    <option value="Social">Social</option>
+                                    <option value="Tradición">Tradición</option>
+                                </select>
+                            </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                <label for="eventDate" class="form-label">Fecha de Inicio</label>
+                                <input type="date" class="form-control" id="eventDate" required>
+                            </div>
+                                        <div class="col-md-6 mb-3">
+                                <label for="eventTime" class="form-label">Hora de Inicio</label>
+                                <input type="time" class="form-control" id="eventTime" required>
+                            </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="eventEndDate" class="form-label">Fecha de Fin (opcional)</label>
+                                            <input type="date" class="form-control" id="eventEndDate">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                <label for="eventEndTime" class="form-label">Hora de Fin (opcional)</label>
+                                <input type="time" class="form-control" id="eventEndTime">
+                                        </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventLocation" class="form-label">Lugar</label>
+                                <input type="text" class="form-control" id="eventLocation" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventSite" class="form-label">Sitio registrado (opcional)</label>
+                                <select class="form-select" id="eventSite" name="eventSite">
+                                    <option value="">Sin sitio asignado</option>
+                                </select>
+                            </div>
+                            <div class="row mb-3 align-items-end">
+                                <div class="col-md-4">
+                                    <label for="eventLatitude" class="form-label">Latitud</label>
+                                    <input type="text" class="form-control" id="eventLatitude" placeholder="Latitud">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="eventLongitude" class="form-label">Longitud</label>
+                                    <input type="text" class="form-control" id="eventLongitude" placeholder="Longitud">
+                                </div>
+                                <div class="col-md-4 d-grid">
+                                    <button type="button" class="btn btn-secondary mt-md-2" onclick="calcularCoordenadas()">Calcular Coordenadas</button>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventSponsor" class="form-label">Patrocina</label>
+                                <input type="text" class="form-control" id="eventSponsor" placeholder="Nombre del patrocinador">
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventPrice" class="form-label">Precio</label>
+                                <input type="text" class="form-control" id="eventPrice" placeholder="Ej: Gratis o $10,000">
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventCapacity" class="form-label">Capacidad</label>
+                                <input type="number" class="form-control" id="eventCapacity" min="0">
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventOrganizer" class="form-label">Organizador</label>
+                                <input type="text" class="form-control" id="eventOrganizer" placeholder="Nombre del organizador">
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventContact" class="form-label">Contacto</label>
+                                <input type="email" class="form-control" id="eventContact" placeholder="Email de contacto">
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventPhone" class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" id="eventPhone" placeholder="Teléfono de contacto">
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventTargetAudience" class="form-label">Público Dirigido</label>
+                                <input type="text" class="form-control" id="eventTargetAudience" placeholder="Ej: Todo público, +18, etc.">
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventTags" class="form-label">Etiquetas (separadas por comas)</label>
+                                <input type="text" class="form-control" id="eventTags" placeholder="Ej: Gratis, +18, Familiar">
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventMetadata" class="form-label">Metadatos (separados por comas)</label>
+                                <input type="text" class="form-control" id="eventMetadata" placeholder="Ej: concierto, rock, nacional">
+                                <small class="form-text text-muted">Los metadatos ayudarán a mejorar la búsqueda del evento en la plataforma.</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventImageUrl" class="form-label">Imagen del Evento (URL):</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="eventImageUrl" name="eventImageUrl" readonly placeholder="URL de la imagen subida...">
+                                    <button type="button" class="btn btn-primary" onclick="window.openCloudinaryWidget('eventImageUrl', false, null, null, 16/9)">Subir Imagen</button>
+                                </div>
+                                <div id="eventImageUrlPreviewSingle" class="mt-2"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Galería de Imágenes (Evento):</label>
+                                <button type="button" class="btn btn-outline-primary btn-sm d-block mb-2" id="addEventGalleryImageBtn" onclick="window.openCloudinaryWidget(null, true, 'eventGalleryPreview', 'eventGallery')">Añadir a Galería</button>
+                                <input type="hidden" id="eventGallery" name="eventGallery" value="[]">
+                                <div id="eventGalleryPreview" class="d-flex flex-wrap gap-2 mb-2"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventFacebook" class="form-label">Facebook</label>
+                                <input type="url" class="form-control" id="eventFacebook" placeholder="URL de Facebook">
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventInstagram" class="form-label">Instagram</label>
+                                <input type="url" class="form-control" id="eventInstagram" placeholder="URL de Instagram">
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventYoutube" class="form-label">YouTube</label>
+                                <input type="url" class="form-control" id="eventYoutube" placeholder="URL de YouTube">
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventWebsite" class="form-label">Página Web</label>
+                                <input type="url" class="form-control" id="eventWebsite" placeholder="URL de la página web">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Participantes</label>
+                                <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                        <label for="eventArtists" class="form-label">Artistas</label>
+                                                <select class="form-select" id="eventArtists" multiple>
+                                            <!-- Opciones de artistas se llenarán dinámicamente -->
+                                        </select>
+                                                <small class="form-text text-muted">Puedes seleccionar varios artistas (Ctrl/Cmd + click).</small>
+                                    </div>
+                                            <div class="col-md-6 mb-3">
+                                        <label for="eventGroups" class="form-label">Agrupaciones</label>
+                                                <select class="form-select" id="eventGroups" multiple>
+                                            <!-- Opciones de agrupaciones se llenarán dinámicamente -->
+                                        </select>
+                                                <small class="form-text text-muted">Puedes seleccionar varias agrupaciones (Ctrl/Cmd + click).</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mini Slider (máx. 10 imágenes):</label>
+                                <button type="button" class="btn btn-outline-primary btn-sm d-block mb-2" id="addEventMiniSliderImageBtn" onclick="window.openCloudinaryWidget(null, true, 'eventMiniSliderPreview', 'eventMiniSlider')">Añadir al Mini Slider</button>
+                                <input type="hidden" id="eventMiniSlider" name="eventMiniSlider" value="[]">
+                                <div id="eventMiniSliderPreview" class="d-flex flex-wrap gap-2 mb-2"></div>
+                            </div>
+                                    <div class="mt-4 text-end">
+                                        <button type="submit" class="btn btn-primary">Guardar Evento</button>
+                                    </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña de Artistas -->
+                    <div class="tab-pane fade" id="artistsPane" role="tabpanel" aria-labelledby="artists-tab">
+                <div class="card">
+                    <div class="card-body">
+                                <h5 class="card-title">Crear/Editar Artista</h5>
+                        <form id="artistForm" class="mb-4">
+                            <div class="mb-3">
+                                <label for="artistName" class="form-label">Nombre del Artista</label>
+                                <input type="text" class="form-control" id="artistName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="artistCategory" class="form-label">Categoría</label>
+                                        <select class="form-select" id="artistCategory" required>
+                                    <option value="">Selecciona una categoría</option>
+                                    <option value="Animación">Animación</option>
+                                    <option value="Arte Digital">Arte Digital</option>
+                                    <option value="Artes Visuales">Artes Visuales</option>
+                                    <option value="Artesanía">Artesanía</option>
+                                    <option value="Artesano">Artesano</option>
+                                    <option value="Bioarte">Bioarte</option>
+                                    <option value="Canto">Canto</option>
+                                    <option value="Caricaturista">Caricaturista</option>
+                                    <option value="Cine (Dirección)">Cine (Dirección)</option>
+                                    <option value="Criptoarte">Criptoarte</option>
+                                    <option value="Danza">Danza</option>
+                                    <option value="Dibujo">Dibujo</option>
+                                    <option value="Diseño">Diseño</option>
+                                    <option value="Diseño Gráfico">Diseño Gráfico</option>
+                                    <option value="Diseño de interiores">Diseño de interiores</option>
+                                    <option value="Diseño de moda">Diseño de moda</option>
+                                    <option value="Diseño industrial">Diseño industrial</option>
+                                    <option value="Electrónica">Electrónica</option>
+                                    <option value="Ensayo">Ensayo</option>
+                                    <option value="Escultura">Escultura</option>
+                                    <option value="Fotografía">Fotografía</option>
+                                    <option value="Filmmaker">Filmmaker</option>
+                                    <option value="Guión (Cine/Televisión)">Guión (Cine/Televisión)</option>
+                                    <option value="Ilustración">Ilustración</option>
+                                    <option value="Literatura">Literatura</option>
+                                    <option value="Músico">Músico</option>
+                                    <option value="Orfebrería">Orfebrería</option>
+                                    <option value="Pintura">Pintura</option>
+                                    <option value="Poesía">Poesía</option>
+                                    <option value="Producción Musical">Producción Musical</option>
+                                    <option value="Realización para TV">Realización para TV</option>
+                                    <option value="Teatro">Teatro</option>
+                                    <option value="VFX">VFX</option>
+                                    <option value="Videografía">Videografía</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="artistBio" class="form-label">Sobre el artista</label>
+                                <textarea class="form-control" id="artistBio" rows="2" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="artistBiography" class="form-label">Trayectoria</label>
+                                <textarea class="form-control" id="artistBiography" rows="4"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="artistAchievements" class="form-label">Logros (uno por línea)</label>
+                                <textarea class="form-control" id="artistAchievements" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="artistInfluences" class="form-label">Influencias (separadas por comas)</label>
+                                <textarea class="form-control" id="artistInfluences" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="artistCurrentProjects" class="form-label">Proyectos actuales</label>
+                                        <textarea class="form-control mb-2" id="artistCurrentProjects" rows="4" placeholder="Describe los proyectos actuales del artista..."></textarea>
+                                <div class="input-group">
+                                            <input type="text" class="form-control" id="artistCurrentProjectsImages" readonly placeholder="URLs de imágenes de proyectos...">
+                                    <button type="button" class="btn btn-primary" onclick="window.openCloudinaryWidget('artistCurrentProjectsImages', false, null, null, 1)">Subir Imágenes</button>
+                                </div>
+                                <small class="form-text text-muted">Puedes agregar descripción y subir imágenes de los proyectos actuales.</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="artistImageUrl" class="form-label">Imagen de Perfil (URL):</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="artistImageUrl" name="artistImageUrl" readonly>
+                                    <button type="button" class="btn btn-primary" onclick="window.openCloudinaryWidget('artistImageUrl', false, null, null, 1)">Subir Imagen</button>
+                                </div>
+                                <div id="artistImageUrlPreviewSingle" class="mt-2"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="artistCoverUrl" class="form-label">Imagen de Portada (URL):</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="artistCoverUrl" name="artistCoverUrl" readonly>
+                                    <button type="button" class="btn btn-primary" onclick="window.openCloudinaryWidget('artistCoverUrl', false, null, null, 16/9)">Subir Imagen</button>
+                                </div>
+                                <div id="artistCoverUrlPreviewSingle" class="mt-2"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="artistFacebook" class="form-label">Facebook</label>
+                                <input type="url" class="form-control" id="artistFacebook" placeholder="URL de Facebook">
+                            </div>
+                            <div class="mb-3">
+                                <label for="artistInstagram" class="form-label">Instagram</label>
+                                <input type="url" class="form-control" id="artistInstagram" placeholder="URL de Instagram">
+                            </div>
+                            <div class="mb-3">
+                                <label for="artistYoutube" class="form-label">YouTube</label>
+                                <input type="url" class="form-control" id="artistYoutube" placeholder="URL de YouTube">
+                            </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="artistIsNewTalent">
+                                    <label class="form-check-label" for="artistIsNewTalent">Es Nuevo Talento</label>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Galería de Imágenes (Artista):</label>
+                                <button type="button" class="btn btn-outline-primary btn-sm d-block mb-2" id="addArtistGalleryImageBtn" onclick="window.openCloudinaryWidget(null, true, 'artistGalleryPreview', 'artistGallery')">Añadir a Galería</button>
+                                <input type="hidden" id="artistGallery" name="artistGallery" value="[]">
+                                <div id="artistGalleryPreview" class="d-flex flex-wrap gap-2 mb-2"></div>
+                            </div>
+                                    <div class="mt-4 text-end">
+                                        <button type="submit" class="btn btn-primary">Guardar Artista</button>
+                                    </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña de Agrupaciones -->
+                    <div class="tab-pane fade" id="groupsPane" role="tabpanel" aria-labelledby="groups-tab">
+                <div class="card">
+                    <div class="card-body">
+                                <h5 class="card-title">Crear/Editar Agrupación</h5>
+                        <form id="groupForm" class="mb-4">
+                            <div class="mb-3">
+                                <label for="groupName" class="form-label">Nombre de la Agrupación</label>
+                                <input type="text" class="form-control" id="groupName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="groupDescription" class="form-label">Descripción Corta</label>
+                                <textarea class="form-control" id="groupDescription" rows="2" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="groupBiography" class="form-label">Biografía Completa</label>
+                                <textarea class="form-control" id="groupBiography" rows="4"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="groupCategory" class="form-label">Categoría</label>
+                                        <select class="form-select" id="groupCategory" required>
+                                    <option value="">Selecciona una categoría</option>
+                                    <option value="Agrupación">Agrupación</option>
+                                    <option value="Agrupación Folclórica">Agrupación Folclórica</option>
+                                    <option value="Agrupación Musical">Agrupación Musical</option>
+                                    <option value="Agrupación vallenata">Agrupación vallenata</option>
+                                    <option value="Artistas visuales">Artistas visuales</option>
+                                    <option value="Artesanos">Artesanos</option>
+                                    <option value="Banda de Pop">Banda de Pop</option>
+                                    <option value="Banda de Rock">Banda de Rock</option>
+                                    <option value="Breakdance">Breakdance</option>
+                                    <option value="Circo">Circo</option>
+                                    <option value="Club de lectura">Club de lectura</option>
+                                    <option value="Compañía audiovisual">Compañía audiovisual</option>
+                                    <option value="Compañía de teatro">Compañía de teatro</option>
+                                    <option value="Comunidad indígena">Comunidad indígena</option>
+                                    <option value="Contenido digital">Contenido digital</option>
+                                    <option value="Coro">Coro</option>
+                                    <option value="Coro infantil">Coro infantil</option>
+                                    <option value="Coro Juvenil">Coro Juvenil</option>
+                                    <option value="Colectivos de cine">Colectivos de cine</option>
+                                    <option value="Danza folclórica">Danza folclórica</option>
+                                    <option value="Enfoque político">Enfoque político</option>
+                                    <option value="Enfoque social">Enfoque social</option>
+                                    <option value="Ensamble">Ensamble</option>
+                                    <option value="Equipo de producción">Equipo de producción</option>
+                                    <option value="Escuela">Escuela</option>
+                                    <option value="Festival">Festival</option>
+                                    <option value="Futbol">Futbol</option>
+                                    <option value="Grupo de danza">Grupo de danza</option>
+                                    <option value="Grupo de danza contemporánea">Grupo de danza contemporánea</option>
+                                    <option value="Grupo de hip-hop">Grupo de hip-hop</option>
+                                    <option value="Grupo de música urbana">Grupo de música urbana</option>
+                                    <option value="Grupo de rap">Grupo de rap</option>
+                                    <option value="Grupos de fotografía">Grupos de fotografía</option>
+                                    <option value="Infantil">Infantil</option>
+                                    <option value="Juvenil">Juvenil</option>
+                                    <option value="Orquesta">Orquesta</option>
+                                    <option value="Orquesta juvenil">Orquesta juvenil</option>
+                                    <option value="Orquesta sinfónica">Orquesta sinfónica</option>
+                                    <option value="Performance">Performance</option>
+                                    <option value="Productora">Productora</option>
+                                    <option value="Red de artistas">Red de artistas</option>
+                                    <option value="Semillero artístico">Semillero artístico</option>
+                                    <option value="Sin ánimo de lucro">Sin ánimo de lucro</option>
+                                    <option value="Skate">Skate</option>
+                                    <option value="Talleres">Talleres</option>
+                                    <option value="Teatro experimental">Teatro experimental</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="groupImageUrl" class="form-label">Imagen Principal (URL):</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="groupImageUrl" name="groupImageUrl" readonly>
+                                    <button type="button" class="btn btn-primary" onclick="window.openCloudinaryWidget('groupImageUrl', false, null, null, 1)">Subir Imagen</button>
+                                </div>
+                                <div id="groupImageUrlPreviewSingle" class="mt-2"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="groupCoverUrl" class="form-label">Imagen de Portada (URL):</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="groupCoverUrl" name="groupCoverUrl" readonly>
+                                    <button type="button" class="btn btn-primary" onclick="window.openCloudinaryWidget('groupCoverUrl', false, null, null, 16/9)">Subir Imagen</button>
+                                </div>
+                                <div id="groupCoverUrlPreviewSingle" class="mt-2"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="groupYear" class="form-label">Año de Fundación</label>
+                                <input type="number" class="form-control" id="groupYear" min="1900" max="2024">
+                            </div>
+                            <div class="mb-3">
+                                <label for="groupEmail" class="form-label">Email de Contacto</label>
+                                <input type="email" class="form-control" id="groupEmail">
+                            </div>
+                            <div class="mb-3">
+                                <label for="groupPhone" class="form-label">Teléfono de Contacto</label>
+                                <input type="tel" class="form-control" id="groupPhone">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Galería de Imágenes (Agrupación):</label>
+                                <button type="button" class="btn btn-outline-primary btn-sm d-block mb-2" id="addGroupGalleryImageBtn" onclick="window.openCloudinaryWidget(null, true, 'groupGalleryPreview', 'groupGallery')">Añadir a Galería</button>
+                                <input type="hidden" id="groupGallery" name="groupGallery" value="[]">
+                                <div id="groupGalleryPreview" class="d-flex flex-wrap gap-2 mb-2"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="groupAchievements" class="form-label">Logros (uno por línea)</label>
+                                <textarea class="form-control" id="groupAchievements" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="groupSocial" class="form-label">Redes Sociales</label>
+                                <div class="input-group mb-2">
+                                            <span class="input-group-text">FB</span>
+                                    <input type="url" class="form-control" id="groupFacebook" placeholder="Facebook">
+                                </div>
+                                <div class="input-group mb-2">
+                                            <span class="input-group-text">IG</span>
+                                    <input type="url" class="form-control" id="groupInstagram" placeholder="Instagram">
+                                </div>
+                                <div class="input-group">
+                                            <span class="input-group-text">YT</span>
+                                    <input type="url" class="form-control" id="groupYoutube" placeholder="YouTube">
+                                </div>
+                            </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="groupIsFeatured">
+                                    <label class="form-check-label" for="groupIsFeatured">Es Agrupación Destacada</label>
+                                </div>
+                                    <div class="mt-4 text-end">
+                                        <button type="submit" class="btn btn-primary">Guardar Agrupación</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+                </div> <!-- Fin de #adminTabContent -->
+            </div> <!-- Fin de .admin-form-col -->
+
+            <!-- Columna Derecha: Listas de Existencias -->
+            <div class="admin-list-col">
+        <div>
+                    <h3 class="admin-list-title">Sitios Existentes</h3>
+                    <ul id="sitesList" class="list-group"></ul>
+        </div>
+        <div>
+                    <h3 class="admin-list-title">Eventos Existentes</h3>
+                    <ul id="eventsList" class="list-group"></ul>
+        </div>
+        <div>
+                    <h3 class="admin-list-title">Artistas Existentes</h3>
+                    <ul id="artistsList" class="list-group"></ul>
+        </div>
+        <div>
+                    <h3 class="admin-list-title">Agrupaciones Existentes</h3>
+                    <ul id="groupsList" class="list-group"></ul>
+        </div>
+            </div> <!-- Fin de .admin-list-col -->
+
+        </div> <!-- Fin de .admin-main -->
+    </div> <!-- Fin de .admin-main-container -->
+    
+    <div id="adminNotification" class="admin-notification"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { db } from '../src/views/js/firebase-init.js';
+        import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, getDoc, query, orderBy, Timestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        let currentCloudinaryTarget = {}; // { inputIdForSingle, isGallery, galleryPreviewContainerId, galleryHiddenInputId, singleImagePreviewId }
+
+        const cloudinaryWidget = cloudinary.createUploadWidget({
+            cloudName: 'dcsjpy3yh', 
+            uploadPreset: 'vive_aguachica', 
+            multiple: false, 
+            sources: ["local", "url", "camera"],
+            cropping: true, 
+            showAdvancedOptions: true, 
+            theme: "minimal",
+            language: "es",
+            text: {
+                "es": {
+                    "queue": {
+                        "title": "Cola de subida",
+                        "title_uploading_with_counter": "Subiendo {{num}} archivos",
+                         "title_processing_with_counter": "Procesando {{num}} archivos",
+                        "title_upload_complete": "Subida completa",
+                        "title_processing_complete": "Procesamiento completo",
+                        "done": "Hecho",
+                        "retry": "Reintentar",
+                        "remove": "Eliminar",
+                        "description": "Sube tus archivos aquí.",
+                        "upload_button": "Subir archivos",
+                        "back": "Atrás",
+                        "close": "Cerrar"
+                    },
+                    "sources":{
+                        "local": {
+                            "title": "Mis archivos",
+                            "drop_files_here_or_browse": "Arrastra archivos aquí o haz clic para buscar"
+                        },
+                        "url": {
+                             "title": "URL pública"
+                        },
+                         "camera": {
+                             "title": "Cámara"
+                        }
+                    },
+                    "crop": {
+                        "title": "Recortar",
+                        "aspect_ratio_free": "Libre",
+                        "aspect_ratio_original": "Original",
+                        "aspect_ratio_square": "Cuadrado"
+                    }
+                }
+            }
+        }, (error, result) => {
+            if (error) {
+                console.error("Cloudinary Error:", error);
+                showNotification("Error Cloudinary: " + (error.message || JSON.stringify(error.data?.message || error)), true);
+                currentCloudinaryTarget = {}; // Limpiar target en caso de error
+                return;
+            }
+            if (result && result.event === "success") {
+                const imageUrl = result.info.secure_url;
+                if (currentCloudinaryTarget.isGallery && currentCloudinaryTarget.galleryHiddenInputId && currentCloudinaryTarget.galleryPreviewContainerId) {
+                    const galleryInput = document.getElementById(currentCloudinaryTarget.galleryHiddenInputId);
+                    const galleryPreviewContainer = document.getElementById(currentCloudinaryTarget.galleryPreviewContainerId);
+                    if (galleryInput && galleryPreviewContainer) {
+                        let galleryUrls = JSON.parse(galleryInput.value || '[]');
+                        galleryUrls.push(imageUrl);
+                        galleryInput.value = JSON.stringify(galleryUrls);
+                        renderImageInGalleryPreview(galleryPreviewContainer, imageUrl, galleryUrls, galleryInput);
+                    }
+                } else if (currentCloudinaryTarget.inputIdForSingle) {
+                    const targetInput = document.getElementById(currentCloudinaryTarget.inputIdForSingle);
+                    if (targetInput) targetInput.value = imageUrl;
+                    if (currentCloudinaryTarget.singleImagePreviewId) {
+                        const previewElement = document.getElementById(currentCloudinaryTarget.singleImagePreviewId);
+                        if (previewElement) previewElement.innerHTML = `<img src="${imageUrl}" alt="Previsualización" class="img-thumbnail mt-2" style="max-width: 120px; max-height: 120px;">`;
+                    }
+                }
+                currentCloudinaryTarget = {}; 
+            }
+        });
+
+        window.openCloudinaryWidget = function(inputIdForSingle = null, isGallery = false, galleryPreviewContainerId = null, galleryHiddenInputIdForGallery = null, aspectRatio = null) {
+            cloudinaryWidget.update({ multiple: isGallery, croppingAspectRatio: aspectRatio }); // Actualizar opciones del widget
+            currentCloudinaryTarget = { 
+                inputIdForSingle: inputIdForSingle,
+                isGallery: isGallery, 
+                galleryPreviewContainerId: galleryPreviewContainerId, 
+                galleryHiddenInputId: galleryHiddenInputIdForGallery,
+                singleImagePreviewId: inputIdForSingle ? inputIdForSingle + 'PreviewSingle' : null
+            };
+            cloudinaryWidget.open();
+        };
+
+        function renderImageInGalleryPreview(previewContainer, imageUrl, allUrlsArray, galleryInputElement) {
+            if (!previewContainer) { console.error("Preview container no encontrado para renderizar imagen de galería."); return; }
+            const imgContainer = document.createElement('div');
+            imgContainer.className = 'position-relative d-inline-block m-1';
+            const img = document.createElement('img');
+            img.src = imageUrl; img.className = 'img-thumbnail';
+            img.style.width = '75px'; img.style.height = '75px'; img.style.objectFit = 'cover';
+            const deleteBtn = document.createElement('button');
+            deleteBtn.innerHTML = '&times;';
+            deleteBtn.type = 'button'; // Evitar submit del form
+            deleteBtn.className = 'btn btn-danger btn-sm position-absolute top-0 end-0 p-0 lh-1';
+            deleteBtn.style.width='20px'; deleteBtn.style.height='20px'; deleteBtn.style.borderRadius='50%';
+            deleteBtn.onclick = function() {
+                const index = allUrlsArray.indexOf(imageUrl);
+                if (index > -1) allUrlsArray.splice(index, 1);
+                if(galleryInputElement) galleryInputElement.value = JSON.stringify(allUrlsArray);
+                imgContainer.remove();
+            };
+            imgContainer.appendChild(img); imgContainer.appendChild(deleteBtn);
+            previewContainer.appendChild(imgContainer);
+        }
+
+        function initGalleryPreview(hiddenInputId, previewContainerId) {
+            const galleryInput = document.getElementById(hiddenInputId);
+            const previewContainer = document.getElementById(previewContainerId);
+            if (galleryInput && galleryInput.value && previewContainer) {
+                try {
+                    const urls = JSON.parse(galleryInput.value);
+                    previewContainer.innerHTML = ''; 
+                    if (Array.isArray(urls)) {
+                       urls.forEach(url => renderImageInGalleryPreview(previewContainer, url, urls, galleryInput));
+                    }
+                } catch (e) { console.error("Error inicializando galería "+hiddenInputId, e); if(galleryInput) galleryInput.value='[]'; }
+            }
+        }
+        
+        // --- Lógica para SITIOS --- 
+        const siteForm = document.getElementById('addSiteForm');
+        const siteFormTitleEl = document.getElementById('siteFormTitle');
+        const siteSubmitBtn = document.getElementById('submitSiteFormBtn');
+        const siteEditingIdField = document.getElementById('editingSiteId');
+
+        function clearSiteForm() {
+            if (!siteForm) return;
+            siteForm.reset();
+            siteEditingIdField.value = '';
+            if (siteFormTitleEl) siteFormTitleEl.textContent = 'Añadir Nuevo Sitio';
+            if (siteSubmitBtn) siteSubmitBtn.textContent = 'Añadir Sitio';
+            ['featuredImagePreviewSingle', 'logoImagePreviewSingle', 'siteGalleryImagesPreview'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = '';
+            });
+            const galleryInput = document.getElementById('siteGalleryImages'); // ID específico para galería de sitios
+            if(galleryInput) galleryInput.value = '[]';
+        }
+        document.getElementById('clearSiteFormBtn')?.addEventListener('click', clearSiteForm);
+
+        siteForm?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const editingId = siteEditingIdField.value;
+            const siteData = {
+                name: this.siteName.value.trim(),
+                shortDescription: this.shortDescription.value.trim(),
+                fullDescription: this.fullDescription.value.trim(),
+                mainCategory: this.mainCategory.value,
+                subcategoriesTags: this.subcategoriesTags.value.split(',').map(t => t.trim()).filter(t => t),
+                featuredImageUrl: this.featuredImage.value || '',
+                galleryImageUrls: JSON.parse(this.siteGalleryImages.value || '[]'), // Usar ID específico
+                logoImageUrl: this.logoImage.value || '',
+                exactAddress: this.exactAddress.value.trim(),
+                latitude: parseFloat(this.latitude.value) || null,
+                longitude: parseFloat(this.longitude.value) || null,
+                neighborhood: this.neighborhood.value.trim(),
+                hours: {
+                    lunes: this.hoursMonday.value.trim(), martes: this.hoursTuesday.value.trim(), 
+                    miercoles: this.hoursWednesday.value.trim(), jueves: this.hoursThursday.value.trim(), 
+                    viernes: this.hoursFriday.value.trim(), sabado: this.hoursSaturday.value.trim(), 
+                    domingo: this.hoursSunday.value.trim()
+                },
+                seasonalOnly: this.seasonalOnly.checked,
+                specialDates: this.specialDates.value.trim(),
+                phoneNumber: this.phoneNumber.value.trim(),
+                whatsappNumber: this.whatsappNumber.value.trim(),
+                socialInstagram: this.socialInstagram.value.trim(),
+                socialFacebook: this.socialFacebook.value.trim(),
+                socialTikTok: this.socialTikTok.value.trim(),
+                websiteUrl: this.websiteUrl.value.trim(),
+                hasReservationButton: this.hasReservationButton.checked,
+                upcomingEventsRef: this.upcomingEvents.value.split(',').map(t => t.trim()).filter(t => t),
+                featuredArtistsRef: this.featuredArtists.value.split(',').map(t => t.trim()).filter(t => t),
+                entryType: this.entryType ? (Array.from(this.entryType).find(r => r.checked)?.value || null) : null,
+                audienceType: this.audienceType ? (Array.from(this.audienceType).find(r => r.checked)?.value || null) : null,
+                parking: this.parking ? (Array.from(this.parking).find(r => r.checked)?.value || null) : null,
+                tagsUseful: {
+                    idealForPhotos: this.idealForPhotos.checked, recommendedByVA: this.recommendedByVA.checked,
+                    accessible: this.accessible.checked, idealForDates: this.idealForDates.checked,
+                    idealForGroups: this.idealForGroups.checked, petFriendly: this.petFriendly.checked,
+                    naturalEnvironment: this.naturalEnvironment.checked
+                },
+                usualWeather: this.usualWeather.value.trim(),
+                slug: this.siteSlug.value.trim() || (this.siteName.value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now().toString(36).slice(-4)),
+                status: this.siteStatus.value,
+                updatedAt: Timestamp.now()
+            };
+            try {
+                if (editingId) {
+                    await updateDoc(doc(db, 'sites', editingId), siteData);
+                    showNotification('Sitio actualizado.');
+                } else {
+                    siteData.createdAt = Timestamp.now();
+                    await addDoc(collection(db, 'sites'), siteData);
+                    showNotification('Sitio añadido.');
+                }
+                clearSiteForm();
+                loadSites();
+            } catch (error) { console.error("Error guardando sitio:", error); showNotification("Error: " + error.message, true); }
+        });
+        
+        // --- FUNCIONES CRUD GENÉRICAS Y CARGA DE LISTAS (adaptadas) ---
+        function createListItemHTML(item, type, id) {
+            const itemImage = item.imageUrl || item.imagen || item.featuredImageUrl || item.logoImageUrl;
+            const imageHTML = itemImage ? `<img src="${itemImage}" alt="" class="admin-list-item-img">` : `<div class="admin-list-item-img placeholder"><span>S/I</span></div>`;
+            const title = item.title || item.name || item.nombre || 'Sin Nombre';
+            let subtitle = type === 'event' ? (item.fechaInicio?.toDate().toLocaleDateString('es-ES', { day:'2-digit', month:'short' }) + ' - ' + (item.location || 'N/A')) : (item.mainCategory || item.category || item.categoria || 'Sin categoría');
+            if ((type === 'group' || type === 'artist') && item.esDestacada) subtitle += ' <span class="badge bg-warning text-dark">Destacada</span>';
+            if (type === 'site') subtitle = (item.mainCategory || 'Cat. desc.') + (item.neighborhood ? ` - ${item.neighborhood}` : '');
+            return `
+                <div class="admin-list-item-main-info">
+                    ${imageHTML}
+                    <div class="admin-list-item-text"><h6>${title}</h6><small>${subtitle}</small></div>
+                </div>
+                <div class="admin-list-item-actions">
+                    <button class="btn btn-outline-primary btn-sm" onclick="window.editDoc('${type}', '${id}')">Editar</button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="window.deleteDocFirebase('${type === "group" ? "agrupaciones" : type + "s"}', '${id}', 'load${type.charAt(0).toUpperCase() + type.slice(1)}s')">Eliminar</button>
+                </div>`;
+        }
+        
+        async function loadItems(collectionName, listElId, itemType, sortField = 'createdAt', sortDir = 'desc') {
+            try {
+                const q = query(collection(db, collectionName), orderBy(sortField, sortDir));
+                const snapshot = await getDocs(q);
+                const listEl = document.getElementById(listElId);
+                if (!listEl) { console.warn("Elemento de lista no encontrado: ", listElId); return; }
+                listEl.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const item = docSnap.data();
+                    const li = document.createElement('li'); li.className = 'list-group-item';
+                    li.innerHTML = createListItemHTML(item, itemType, docSnap.id);
+                    listEl.appendChild(li);
+                });
+            } catch (e) { console.error(`Error cargando ${collectionName}:`, e); showNotification(`Error cargando ${collectionName}.`, true); }
+        }
+
+        window.loadSites = () => loadItems('sites', 'sitesList', 'site', 'name', 'asc');
+        window.loadEvents = () => loadItems('events', 'eventsList', 'event', 'fechaInicio');
+        window.loadArtists = () => loadItems('artists', 'artistsList', 'artist', 'name', 'asc');
+        window.loadGroups = () => loadItems('agrupaciones', 'groupsList', 'group', 'nombre', 'asc');
+
+        window.deleteDocFirebase = async (collName, id, loadCallbackNameStr) => { 
+            if(confirm('¿Eliminar este elemento?')) { 
+                try { 
+                    // TODO: Lógica para eliminar imágenes de Cloudinary si están almacenadas allí y no solo URLs.
+                    await deleteDoc(doc(db, collName, id)); 
+                    showNotification('Elemento eliminado.'); 
+                    if(window[loadCallbackNameStr] && typeof window[loadCallbackNameStr] === 'function') window[loadCallbackNameStr]();
+                    else console.warn("Función de callback de carga no encontrada: ", loadCallbackNameStr);
+                } catch(e){ showNotification('Error al eliminar: '+e.message,true); console.error(e);}
+            }
+        };
+
+        window.editDoc = async (type, id) => {
+            let formEl, collName, tabBtnId, formTitleEl, submitBtnEl, titlePrefix, specificLoadFn, hiddenIdField;
+            
+            switch(type) {
+                case 'site':
+                    formEl = siteForm; collName = 'sites'; tabBtnId = 'add-site-tab'; formTitleEl = siteFormTitleEl; 
+                    submitBtnEl = siteSubmitBtn; titlePrefix = 'Sitio'; hiddenIdField = siteEditingIdField;
+                    specificLoadFn = (data) => {
+                        clearSiteForm(); // Limpia primero, incluyendo previews y hidden inputs de galería
+                        formEl.siteName.value = data.name || '';
+                        formEl.shortDescription.value = data.shortDescription || '';
+                        formEl.fullDescription.value = data.fullDescription || '';
+                        formEl.mainCategory.value = data.mainCategory || '';
+                        formEl.subcategoriesTags.value = data.subcategoriesTags?.join(', ') || '';
+                        
+                        formEl.featuredImage.value = data.featuredImageUrl || '';
+                        if(data.featuredImageUrl) document.getElementById('featuredImagePreviewSingle').innerHTML = `<img src="${data.featuredImageUrl}" class="img-thumbnail mt-2" style="max-width:100px;">`;
+                        
+                        formEl.logoImage.value = data.logoImageUrl || '';
+                        if(data.logoImageUrl) document.getElementById('logoImagePreviewSingle').innerHTML = `<img src="${data.logoImageUrl}" class="img-thumbnail mt-2" style="max-width:100px;">`;
+                        
+                        formEl.siteGalleryImages.value = JSON.stringify(data.galleryImageUrls || []);
+                        initGalleryPreview('siteGalleryImages', 'siteGalleryImagesPreview');
+                        
+                        formEl.exactAddress.value = data.exactAddress || ''; formEl.latitude.value = data.latitude || ''; formEl.longitude.value = data.longitude || '';
+                        formEl.neighborhood.value = data.neighborhood || '';
+                        if(data.hours) {
+                            formEl.hoursMonday.value = data.hours.lunes || ''; formEl.hoursTuesday.value = data.hours.martes || '';
+                            formEl.hoursWednesday.value = data.hours.miercoles || ''; formEl.hoursThursday.value = data.hours.jueves || '';
+                            formEl.hoursFriday.value = data.hours.viernes || ''; formEl.hoursSaturday.value = data.hours.sabado || '';
+                            formEl.hoursSunday.value = data.hours.domingo || '';
+                        }
+                        formEl.seasonalOnly.checked = data.seasonalOnly || false; formEl.specialDates.value = data.specialDates || '';
+                        formEl.phoneNumber.value = data.phoneNumber || ''; formEl.whatsappNumber.value = data.whatsappNumber || '';
+                        formEl.socialInstagram.value = data.socialInstagram || ''; formEl.socialFacebook.value = data.socialFacebook || '';
+                        formEl.socialTikTok.value = data.socialTikTok || ''; formEl.websiteUrl.value = data.websiteUrl || '';
+                        formEl.hasReservationButton.checked = data.hasReservationButton || false;
+                        formEl.upcomingEvents.value = data.upcomingEventsRef?.join(', ') || ''; formEl.featuredArtists.value = data.featuredArtistsRef?.join(', ') || '';
+                        
+                        if(data.entryType && formEl.entryType) Array.from(formEl.entryType).find(r=>r.value===data.entryType).checked = true; else if(formEl.entryType) Array.from(formEl.entryType).forEach(r => r.checked = false);
+                        if(data.audienceType && formEl.audienceType) Array.from(formEl.audienceType).find(r=>r.value===data.audienceType).checked = true; else if(formEl.audienceType) Array.from(formEl.audienceType).forEach(r => r.checked = false);
+                        if(data.parking && formEl.parking) Array.from(formEl.parking).find(r=>r.value===data.parking).checked = true; else if(formEl.parking) Array.from(formEl.parking).forEach(r => r.checked = false);
+                        
+                        if(data.tagsUseful) { Object.keys(data.tagsUseful).forEach(k => { if(formEl[k]) formEl[k].checked = data.tagsUseful[k]; }); }
+                        else { ['idealForPhotos', 'recommendedByVA', 'accessible', 'idealForDates', 'idealForGroups', 'petFriendly', 'naturalEnvironment'].forEach(k => {if(formEl[k]) formEl[k].checked = false;}); }
+                        
+                        formEl.usualWeather.value = data.usualWeather || ''; formEl.siteSlug.value = data.slug || ''; formEl.siteStatus.value = data.status || 'activo';
+                    };
+                    break;
+                // TODO: Completar casos para 'event', 'artist', 'group' con su lógica de llenado y IDs de formulario
+                // Ejemplo para evento (parcial):
+                case 'event':
+                    formEl = document.getElementById('eventForm'); collName = 'events'; tabBtnId = 'events-tab'; 
+                    formTitleEl = formEl.querySelector('.card-title'); submitBtnEl = formEl.querySelector('button[type="submit"]'); 
+                    titlePrefix = 'Evento'; hiddenIdField = formEl.querySelector('input[name="editingEventId"]');
+                    if(!hiddenIdField) { hiddenIdField = document.createElement('input'); hiddenIdField.type='hidden'; hiddenIdField.name='editingEventId'; formEl.appendChild(hiddenIdField); }
+                    specificLoadFn = (d) => {
+                        formEl.eventTitle.value = d.title || '';
+                        formEl.eventDescription.value = d.description || '';
+                        formEl.eventCategory.value = d.category || '';
+                        if(d.fechaInicio && d.fechaInicio.toDate){
+                            const dateObj = d.fechaInicio.toDate();
+                            formEl.eventDate.value = dateObj.toISOString().split('T')[0];
+                            formEl.eventTime.value = d.time || dateObj.toTimeString().slice(0,5);
+                        }
+                        if(d.endDate && d.endDate.toDate){
+                            const dateObj = d.endDate.toDate();
+                            formEl.eventEndDate.value = dateObj.toISOString().split('T')[0];
+                            formEl.eventEndTime.value = d.endTime || '';
+                        } else { formEl.eventEndDate.value=''; formEl.eventEndTime.value=''; }
+                        formEl.eventLocation.value = d.location || '';
+                        formEl.eventLatitude.value = d.latitude ?? '';
+                        formEl.eventLongitude.value = d.longitude ?? '';
+                        formEl.eventSponsor.value = d.sponsor || '';
+                        formEl.eventPrice.value = d.price || '';
+                        formEl.eventCapacity.value = d.capacity || '';
+                        formEl.eventOrganizer.value = (d.organizer && typeof d.organizer === 'object' && d.organizer.nombre) ? d.organizer.nombre : (typeof d.organizer === 'string' ? d.organizer : (d.organizador || ''));
+                        formEl.eventContact.value = d.contactEmail || '';
+                        formEl.eventPhone.value = d.phone || '';
+                        formEl.eventTargetAudience.value = d.targetAudience || '';
+                        formEl.eventTags.value = (d.tags||[]).join(', ');
+                        formEl.eventMetadata.value = (d.metadata||[]).join(', ');
+                        formEl.eventImageUrl.value = d.imageUrl || '';
+                        if(d.imageUrl) document.getElementById('eventImageUrlPreviewSingle').innerHTML = `<img src="${d.imageUrl}" class="img-thumbnail mt-2" style="max-width:100px;">`;
+                        formEl.eventGallery.value = JSON.stringify(d.galleryUrls || []);
+                        initGalleryPreview('eventGallery','eventGalleryPreview');
+                        formEl.eventFacebook.value = d.facebook || '';
+                        formEl.eventInstagram.value = d.instagram || '';
+                        formEl.eventYoutube.value = d.youtube || '';
+                        formEl.eventWebsite.value = d.website || '';
+                        // Seleccionar sitio
+                        if(formEl.eventSite) formEl.eventSite.value = d.siteRef || '';
+                        // Seleccionar artistas y agrupaciones
+                        Array.from(formEl.eventArtists.options).forEach(opt=>{ opt.selected = (d.artistsRef||[]).includes(opt.value); });
+                        Array.from(formEl.eventGroups.options).forEach(opt=>{ opt.selected = (d.groupsRef||[]).includes(opt.value); });
+
+                        formEl.eventMiniSlider.value = JSON.stringify(d.miniSliderUrls || []);
+                        initGalleryPreview('eventMiniSlider','eventMiniSliderPreview');
+                    };
+                    break;
+                case 'artist':
+                    formEl = document.getElementById('artistForm'); collName = 'artists'; tabBtnId = 'artists-tab';
+                    formTitleEl = formEl.querySelector('.card-title'); submitBtnEl = formEl.querySelector('button[type="submit"]');
+                    titlePrefix = 'Artista'; hiddenIdField = formEl.querySelector('input[name="editingArtistId"]');
+                    if(!hiddenIdField){ hiddenIdField=document.createElement('input'); hiddenIdField.type='hidden'; hiddenIdField.name='editingArtistId'; formEl.appendChild(hiddenIdField);} 
+                    specificLoadFn = (d)=>{
+                        formEl.artistName.value = d.name || '';
+                        formEl.artistCategory.value = d.category || '';
+                        formEl.artistBio.value = d.bio || '';
+                        formEl.artistBiography.value = d.biography || '';
+                        formEl.artistAchievements.value = (d.achievements||[]).join('\n');
+                        formEl.artistInfluences.value = (d.influences||[]).join(', ');
+                        formEl.artistCurrentProjects.value = d.currentProjects || '';
+                        formEl.artistCurrentProjectsImages.value = d.currentProjectsImages || '';
+                        formEl.artistImageUrl.value = d.imageUrl || '';
+                        if(d.imageUrl) document.getElementById('artistImageUrlPreviewSingle').innerHTML = `<img src="${d.imageUrl}" class="img-thumbnail mt-2" style="max-width:100px;">`;
+                        formEl.artistCoverUrl.value = d.coverUrl || '';
+                        if(d.coverUrl) document.getElementById('artistCoverUrlPreviewSingle').innerHTML = `<img src="${d.coverUrl}" class="img-thumbnail mt-2" style="max-width:100px;">`;
+                        formEl.artistGallery.value = JSON.stringify(d.galleryUrls||[]);
+                        initGalleryPreview('artistGallery','artistGalleryPreview');
+                        formEl.artistIsNewTalent.checked = d.isNewTalent || false;
+                        formEl.artistFacebook.value = d.facebook || '';
+                        formEl.artistInstagram.value = d.instagram || '';
+                        formEl.artistYoutube.value = d.youtube || '';
+                    };
+                    break;
+                case 'group':
+                    formEl = document.getElementById('groupForm'); collName = 'agrupaciones'; tabBtnId = 'groups-tab';
+                    formTitleEl = formEl.querySelector('.card-title'); submitBtnEl = formEl.querySelector('button[type="submit"]');
+                    titlePrefix = 'Agrupación'; hiddenIdField = formEl.querySelector('input[name="editingGroupId"]');
+                    if(!hiddenIdField){ hiddenIdField=document.createElement('input'); hiddenIdField.type='hidden'; hiddenIdField.name='editingGroupId'; formEl.appendChild(hiddenIdField);} 
+                    specificLoadFn = (d)=>{
+                        formEl.groupName.value = d.nombre || d.name || '';
+                        formEl.groupDescription.value = d.descripcion || '';
+                        formEl.groupBiography.value = d.biography || '';
+                        formEl.groupCategory.value = d.category || '';
+                        formEl.groupImageUrl.value = d.imageUrl || '';
+                        if(d.imageUrl) document.getElementById('groupImageUrlPreviewSingle').innerHTML = `<img src="${d.imageUrl}" class="img-thumbnail mt-2" style="max-width:100px;">`;
+                        formEl.groupCoverUrl.value = d.coverUrl || '';
+                        if(d.coverUrl) document.getElementById('groupCoverUrlPreviewSingle').innerHTML = `<img src="${d.coverUrl}" class="img-thumbnail mt-2" style="max-width:100px;">`;
+                        formEl.groupYear.value = d.year || '';
+                        formEl.groupEmail.value = d.email || '';
+                        formEl.groupPhone.value = d.phone || '';
+                        formEl.groupGallery.value = JSON.stringify(d.galleryUrls||[]);
+                        initGalleryPreview('groupGallery','groupGalleryPreview');
+                        formEl.groupAchievements.value = d.achievements || '';
+                        formEl.groupFacebook.value = d.facebook || '';
+                        formEl.groupInstagram.value = d.instagram || '';
+                        formEl.groupYoutube.value = d.youtube || '';
+                        formEl.groupIsFeatured.checked = d.esDestacada || false;
+                    };
+                    break;
+                default: showNotification("Edición para este tipo no implementada: " + type, true); return;
+            }
+            try {
+                const docSnap = await getDoc(doc(db, collName, id));
+                if (!docSnap.exists()) { showNotification('Documento no encontrado.', true); return; }
+                const data = docSnap.data();
+                
+                if (specificLoadFn) specificLoadFn(data);
+                
+                hiddenIdField.value = id;
+                if(formTitleEl) formTitleEl.textContent = 'Editar ' + titlePrefix;
+                if(submitBtnEl) submitBtnEl.textContent = 'Actualizar ' + titlePrefix;
+                
+                const tabButton = document.getElementById(tabBtnId);
+                if (tabButton) new bootstrap.Tab(tabButton).show();
+            } catch (e) { showNotification('Error cargando datos para editar: ' + e.message, true); console.error(e); }
+        };
+
+        function showNotification(message, isError = false) {
+            const el = document.getElementById('adminNotification'); if (!el) return;
+            el.textContent = message; el.className = 'admin-notification alert show ';
+            el.classList.add(isError ? 'alert-danger' : 'alert-success');
+            setTimeout(() => { el.classList.remove('show'); }, 4000);
+        }
+        
+        // async function loadRelatedDataForForms() { /* ... tu código existente ... */ }
+
+        loadSites(); loadEvents(); loadArtists(); loadGroups(); // loadRelatedDataForForms();
+
+        // --- Lógica para EVENTOS ---
+        const eventForm = document.getElementById('eventForm');
+        eventForm?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const editingId = this.querySelector('input[name="editingEventId"]')?.value || '';
+
+            // Construir objeto de datos para el evento
+            const startDate = this.eventDate.value;
+            const startTime = this.eventTime.value || '00:00';
+            if (!startDate) { showNotification('La fecha de inicio es obligatoria', true); return; }
+            const [y,m,d] = startDate.split('-');
+            const [hh,mm] = startTime.split(':');
+            // Crear fecha en hora local para evitar descontar un día por la zona horaria
+            const fechaInicioLocal = new Date(parseInt(y), parseInt(m) - 1, parseInt(d), parseInt(hh || '0'), parseInt(mm || '0'));
+            const fechaInicio = Timestamp.fromDate(fechaInicioLocal);
+
+            let endDateTS = null;
+            let endTimeStr = '';
+            if (this.eventEndDate.value) {
+                endTimeStr = this.eventEndTime.value || '23:59';
+                const [y2,m2,d2] = this.eventEndDate.value.split('-');
+                const [hh2,mm2] = endTimeStr.split(':');
+                const endDateLocal = new Date(parseInt(y2), parseInt(m2) - 1, parseInt(d2), parseInt(hh2 || '0'), parseInt(mm2 || '0'));
+                endDateTS = Timestamp.fromDate(endDateLocal);
+            }
+
+            const eventData = {
+                title: this.eventTitle.value.trim(),
+                description: this.eventDescription.value.trim(),
+                category: this.eventCategory.value,
+                fechaInicio,
+                endDate: endDateTS,
+                time: startTime,
+                endTime: endTimeStr,
+                location: this.eventLocation.value.trim(),
+                latitude: this.eventLatitude.value ? parseFloat(this.eventLatitude.value) : null,
+                longitude: this.eventLongitude.value ? parseFloat(this.eventLongitude.value) : null,
+                sponsor: this.eventSponsor.value.trim(),
+                price: this.eventPrice.value.trim(),
+                capacity: this.eventCapacity.value ? parseInt(this.eventCapacity.value) : null,
+                organizer: this.eventOrganizer.value.trim(),
+                contactEmail: this.eventContact.value.trim(),
+                phone: this.eventPhone.value.trim(),
+                targetAudience: this.eventTargetAudience.value.trim(),
+                tags: this.eventTags.value.split(',').map(t=>t.trim()).filter(Boolean),
+                metadata: this.eventMetadata.value.split(',').map(m=>m.trim()).filter(Boolean),
+                imageUrl: this.eventImageUrl.value.trim(),
+                galleryUrls: JSON.parse(this.eventGallery.value || '[]'),
+                miniSliderUrls: JSON.parse(this.eventMiniSlider.value || '[]'),
+                facebook: this.eventFacebook.value.trim(),
+                instagram: this.eventInstagram.value.trim(),
+                youtube: this.eventYoutube.value.trim(),
+                website: this.eventWebsite.value.trim(),
+                siteRef: (this.eventSite ? this.eventSite.value : (document.getElementById('eventSite')?.value || '')),
+                artistsRef: Array.from(this.eventArtists?.selectedOptions || []).map(o=>o.value),
+                groupsRef: Array.from(this.eventGroups?.selectedOptions || []).map(o=>o.value),
+                updatedAt: Timestamp.now()
+            };
+            try {
+                if (editingId) {
+                    await updateDoc(doc(db, 'events', editingId), eventData);
+                    showNotification('Evento actualizado.');
+                } else {
+                    await addDoc(collection(db, 'events'), { ...eventData, createdAt: Timestamp.now() });
+                    showNotification('Evento añadido.');
+                }
+                this.reset();
+                ['eventImageUrlPreviewSingle','eventGalleryPreview','eventMiniSliderPreview'].forEach(id=>{const el=document.getElementById(id); if(el) el.innerHTML='';});
+                loadEvents();
+                if(this.querySelector('input[name="editingEventId"]')) this.querySelector('input[name="editingEventId"]').value='';
+            } catch(error) {
+                console.error('Error guardando evento:', error);
+                showNotification('Error: '+error.message, true);
+            }
+        });
+
+        // --- Lógica para ARTISTAS ---
+        const artistForm = document.getElementById('artistForm');
+        artistForm?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const editingId = this.querySelector('input[name="editingArtistId"]')?.value || '';
+            const artistData = {
+                name: this.artistName.value.trim(),
+                category: this.artistCategory.value,
+                bio: this.artistBio.value.trim(),
+                biography: this.artistBiography.value.trim(),
+                achievements: this.artistAchievements.value.split('\n').map(l=>l.trim()).filter(Boolean),
+                influences: this.artistInfluences.value.split(',').map(i=>i.trim()).filter(Boolean),
+                currentProjects: this.artistCurrentProjects.value.trim(),
+                currentProjectsImages: this.artistCurrentProjectsImages.value.trim(),
+                imageUrl: this.artistImageUrl.value.trim(),
+                coverUrl: this.artistCoverUrl?.value.trim() || '',
+                isNewTalent: this.artistIsNewTalent?.checked || false,
+                updatedAt: Timestamp.now()
+            };
+            try {
+                if (editingId) {
+                    await updateDoc(doc(db, 'artists', editingId), artistData);
+                    showNotification('Artista actualizado.');
+                } else {
+                    await addDoc(collection(db, 'artists'), { ...artistData, createdAt: Timestamp.now() });
+                    showNotification('Artista añadido.');
+                }
+                this.reset();
+                ['artistImageUrlPreviewSingle','artistCoverUrlPreviewSingle','artistGalleryPreview'].forEach(id=>{const el=document.getElementById(id); if(el) el.innerHTML='';});
+                loadArtists();
+                if(this.querySelector('input[name="editingArtistId"]')) this.querySelector('input[name="editingArtistId"]').value='';
+            } catch(error){
+                console.error('Error guardando artista:', error);
+                showNotification('Error: '+error.message, true);
+            }
+        });
+
+        // --- Lógica para AGRUPACIONES ---
+        const groupForm = document.getElementById('groupForm');
+        groupForm?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const editingId = this.querySelector('input[name="editingGroupId"]')?.value || '';
+            const groupData = {
+                nombre: this.groupName.value.trim(),
+                name: this.groupName.value.trim(),
+                descripcion: this.groupDescription.value.trim(),
+                biography: this.groupBiography.value.trim(),
+                category: this.groupCategory.value,
+                imageUrl: this.groupImageUrl.value.trim(),
+                coverUrl: this.groupCoverUrl.value.trim(),
+                year: this.groupYear.value ? parseInt(this.groupYear.value) : null,
+                email: this.groupEmail.value.trim(),
+                phone: this.groupPhone.value.trim(),
+                galleryUrls: JSON.parse(this.groupGallery.value || '[]'),
+                achievements: this.groupAchievements.value.trim(),
+                facebook: this.groupFacebook.value.trim(),
+                instagram: this.groupInstagram.value.trim(),
+                youtube: this.groupYoutube.value.trim(),
+                esDestacada: this.groupIsFeatured.checked,
+                updatedAt: Timestamp.now()
+            };
+            try {
+                if (editingId) {
+                    await updateDoc(doc(db, 'agrupaciones', editingId), groupData);
+                    showNotification('Agrupación actualizada.');
+                } else {
+                    await addDoc(collection(db, 'agrupaciones'), { ...groupData, createdAt: Timestamp.now() });
+                    showNotification('Agrupación añadida.');
+                }
+                this.reset();
+                ['groupImageUrlPreviewSingle','groupCoverUrlPreviewSingle','groupGalleryPreview'].forEach(id=>{const el=document.getElementById(id); if(el) el.innerHTML='';});
+                loadGroups();
+                if(this.querySelector('input[name="editingGroupId"]')) this.querySelector('input[name="editingGroupId"]').value='';
+            } catch(error){
+                console.error('Error guardando agrupación:', error);
+                showNotification('Error: '+error.message, true);
+            }
+        });
+
+        // --- Cargar artistas y agrupaciones para el formulario de eventos ---
+        async function loadRelatedDataForForms() {
+            try {
+                // Artistas
+                const artistsSnap = await getDocs(query(collection(db, 'artists'), orderBy('name', 'asc')));
+                const eventArtistsSelect = document.getElementById('eventArtists');
+                if (eventArtistsSelect) {
+                    eventArtistsSelect.innerHTML = '';
+                    artistsSnap.forEach(docu => {
+                        const opt = document.createElement('option');
+                        const data = docu.data();
+                        opt.value = docu.id;
+                        opt.textContent = data.name || 'Sin nombre';
+                        eventArtistsSelect.appendChild(opt);
+                    });
+                }
+
+                // Agrupaciones
+                const groupsSnap = await getDocs(query(collection(db, 'agrupaciones'), orderBy('nombre', 'asc')));
+                const eventGroupsSelect = document.getElementById('eventGroups');
+                if (eventGroupsSelect) {
+                    eventGroupsSelect.innerHTML = '';
+                    groupsSnap.forEach(docu => {
+                        const opt = document.createElement('option');
+                        const data = docu.data();
+                        opt.value = docu.id;
+                        opt.textContent = data.nombre || data.name || 'Sin nombre';
+                        eventGroupsSelect.appendChild(opt);
+                    });
+                }
+
+                // Sitios
+                const sitesSnap = await getDocs(query(collection(db,'sites'),orderBy('name','asc')));
+                const eventSiteSelect=document.getElementById('eventSite');
+                if(eventSiteSelect){eventSiteSelect.innerHTML='<option value="">Sin sitio asignado</option>';sitesSnap.forEach(docu=>{const opt=document.createElement('option');opt.value=docu.id;opt.textContent=docu.data().name||'Sin nombre';eventSiteSelect.appendChild(opt);});}
+            } catch(e) { console.error('Error cargando artistas/agrupaciones para formulario de eventos:', e); }
+        }
+
+        loadRelatedDataForForms();
+
+        // --- Función para calcular coordenadas usando Google Maps Geocoding ---
+        window.calcularCoordenadas = async function() {
+            const address = document.getElementById('eventLocation')?.value?.trim();
+            if (!address) {
+                showNotification('Por favor, ingresa una dirección en el campo Lugar.', true);
+                return;
+            }
+            // Reemplaza con tu API Key de Google Maps
+            const apiKey = 'AIzaSyCosFfUJqDMUyHYsbFMMmaIm80Lr1VAH48';
+            const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&region=CO&key=${apiKey}`;
+            try {
+                const resp = await fetch(url);
+                const data = await resp.json();
+                if (data.status === 'OK' && data.results && data.results.length > 0) {
+                    const loc = data.results[0].geometry.location;
+                    document.getElementById('eventLatitude').value = loc.lat;
+                    document.getElementById('eventLongitude').value = loc.lng;
+                    showNotification('Coordenadas calculadas correctamente. Puedes editarlas si lo deseas.');
+                } else {
+                    showNotification('No se pudo encontrar la dirección. Intenta ser más específico.', true);
+                }
+            } catch (e) {
+                showNotification('Error al consultar Google Maps: ' + e.message, true);
+            }
+        }
+
+        // Añadir función calcularCoordenadasSitio similar:
+        window.calcularCoordenadasSitio=async function(){const address=document.getElementById('exactAddress')?.value?.trim();if(!address){showNotification('Ingresa una dirección en el campo Dirección exacta.',true);return;}const apiKey='AIzaSyCosFfUJqDMUyHYsbFMMmaIm80Lr1VAH48';const url=`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&region=CO&key=${apiKey}`;try{const resp=await fetch(url);const data=await resp.json();if(data.status==='OK'&&data.results&&data.results.length>0){const loc=data.results[0].geometry.location;document.getElementById('latitude').value=loc.lat;document.getElementById('longitude').value=loc.lng;showNotification('Coordenadas calculadas.');}else{showNotification('No se pudo encontrar la dirección.',true);} }catch(e){showNotification('Error Google Maps: '+e.message,true);} }
+    </script>
+</body>
+</html> 

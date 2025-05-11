@@ -1,0 +1,43 @@
+<!-- views/perfil.html -->
+<header></header>
+<section>
+  <h2 class="text-2xl font-semibold mb-4">Mi Perfil</h2>
+  <div class="bg-white p-6 rounded shadow max-w-md">
+    <form class="space-y-4">
+      <div>
+        <label class="block font-medium">Nombre</label>
+        <input type="text" class="w-full px-3 py-2 border rounded" placeholder="Tu nombre" />
+      </div>
+      <div>
+        <label class="block font-medium">Correo</label>
+        <input type="email" class="w-full px-3 py-2 border rounded" placeholder="ejemplo@correo.com" />
+      </div>
+      <div>
+        <label class="block font-medium">Tipo de usuario</label>
+        <select class="w-full px-3 py-2 border rounded">
+          <option>Artista</option>
+          <option>Organizador</option>
+          <option>Ciudadano</option>
+        </select>
+      </div>
+      <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Guardar cambios</button>
+    </form>
+  </div>
+</section>
+
+<!-- Sección de favoritos -->
+<section class="bg-white rounded-xl shadow-lg p-6 md:p-8 mt-6">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800">Mis Favoritos</h2>
+    <div id="favoritos-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+</section>
+
+<script>
+  fetch('/src/views/partials/header.html')
+    .then(res => res.text())
+    .then(html => {
+      document.querySelector('header').innerHTML = html;
+      if (window.initHeader) window.initHeader();
+    });
+</script>
+<script src="/src/assets/js/header.js"></script>
+<script src="/src/assets/js/auth.js"></script>

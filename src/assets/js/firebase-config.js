@@ -1,0 +1,8 @@
+export const firebaseConfig = {
+  apiKey: "AIzaSyB-BICWbcKpiP8ImeVBWYVh3eFmrS8mPWY",
+  authDomain: "vive-aguachica.firebaseapp.com",
+  projectId: "vive-aguachica",
+  storageBucket: "vive-aguachica.firebasestorage.app",
+  messagingSenderId: "551401519520",
+  appId: "1:551401519520:web:c7d816f408135fc0f48cc5"
+}; 

@@ -1,0 +1,18 @@
+<!-- views/home.html -->
+<header></header>
+<section class="text-center py-10">
+  <h1 class="text-4xl font-bold text-indigo-600 mb-4">Bienvenido a Vive Aguachica</h1>
+  <p class="text-lg text-gray-600">Descubre, conecta y promueve el talento y la cultura de nuestro municipio.</p>
+  <img src="assets/img/aguachica-header.jpg" alt="Vive Aguachica" class="mx-auto mt-8 rounded-lg shadow-lg" />
+</section>
+
+<script>
+  fetch('/src/views/partials/header.html')
+    .then(res => res.text())
+    .then(html => {
+      document.querySelector('header').innerHTML = html;
+      if (window.initHeader) window.initHeader();
+    });
+</script>
+<script src="/src/assets/js/header.js"></script>
+<script src="/src/assets/js/auth.js"></script>
