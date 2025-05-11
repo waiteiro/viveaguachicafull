@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directorio de Sitios - Vive Aguachica</title>
+    <!-- Puedes usar el mismo CSS de sitios.css o uno específico -->
+    <link rel="stylesheet" href="sitios.css">
+    <style>
+        /* Estilos adicionales o específicos para el directorio */
+        .directorio-container {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .directorio-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 15px;
+        }
+        .directorio-header h2 {
+            font-size: 2rem;
+            color: #333;
+        }
+        .lista-directorio {
+            list-style: none;
+            padding: 0;
+        }
+        .directorio-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 10px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s ease;
+        }
+        .directorio-item:hover {
+            background-color: #f9f9f9;
+        }
+        .directorio-item:last-child {
+            border-bottom: none;
+        }
+        .directorio-item img {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 20px;
+        }
+        .directorio-item-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.2rem;
+            color: #444;
+        }
+        .directorio-item-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #777;
+        }
+        /* Podrías añadir un enlace si cada item debe llevar a una página de detalle */
+        /* .directorio-item a {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        } */
+
+        .controles-directorio {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .controles-directorio input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .btn-volver {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #555;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn-volver:hover {
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- Puedes reutilizar el mismo header o uno más simple -->
+        <h1><a href="sitios.html" style="color:white; text-decoration:none;">Vive Aguachica - Sitios</a></h1>
+    </header>
+
+    <main class="directorio-container">
+        <div class="directorio-header">
+            <h2>Directorio Completo de Sitios</h2>
+            <p>Todos nuestros sitios registrados, en orden alfabético.</p>
+        </div>
+
+        <div class="controles-directorio">
+            <input type="text" id="searchDirectorioInput" placeholder="Buscar en el directorio...">
+        </div>
+
+        <ul class="lista-directorio" id="listaDirectorioUl">
+            <!-- Los items del directorio se cargarán aquí desde JS -->
+            <!-- Ejemplo de item de directorio (estructura base para JS) -->
+            <!-- 
+            <li class="directorio-item">
+                <img src="https://via.placeholder.com/80x60" alt="Nombre del Sitio">
+                <div class="directorio-item-info">
+                    <h3>Nombre del Sitio en Directorio</h3>
+                    <p>Categoría del Sitio</p> 
+                </div>
+            </li> 
+            -->
+        </ul>
+
+        <div style="text-align: center;">
+            <a href="sitios.html" class="btn-volver">← Volver a la Página de Sitios</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Vive Aguachica. Todos los derechos reservados.</p>
+    </footer>
+
+    <script type="module">
+        import { db } from './src/views/js/firebase-init.js';
+        import { collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const listaDirectorioUl = document.getElementById('listaDirectorioUl');
+            const searchDirectorioInput = document.getElementById('searchDirectorioInput');
+            let todosLosSitiosDirectorio = [];
+
+            function crearItemDirectorio(sitio) {
+                const li = document.createElement('li');
+                li.classList.add('directorio-item');
+                li.innerHTML = `
+                    <img src="${sitio.imagen}" alt="${sitio.nombre}">
+                    <div class="directorio-item-info">
+                        <h3>${sitio.nombre}</h3>
+                        <p>${sitio.categoria.charAt(0).toUpperCase() + sitio.categoria.slice(1)}</p>
+                    </div>
+                `;
+                return li;
+            }
+
+            function mostrarDirectorio(sitios) {
+                if (!listaDirectorioUl) return;
+                listaDirectorioUl.innerHTML = '';
+                if (sitios.length === 0) {
+                    listaDirectorioUl.innerHTML = '<li><p>No hay sitios que coincidan con tu búsqueda.</p></li>';
+                    return;
+                }
+                sitios.forEach(s => listaDirectorioUl.appendChild(crearItemDirectorio(s)));
+            }
+
+            function filtrarDirectorio() {
+                const termino = (searchDirectorioInput.value || '').toLowerCase();
+                const filtrados = todosLosSitiosDirectorio.filter(s =>
+                    s.nombre.toLowerCase().includes(termino) ||
+                    s.categoria.toLowerCase().includes(termino)
+                );
+                mostrarDirectorio(filtrados);
+            }
+
+            searchDirectorioInput?.addEventListener('keyup', filtrarDirectorio);
+
+            async function cargarSitios() {
+                try {
+                    const q = query(collection(db, 'sites'), orderBy('name', 'asc'));
+                    const snapshot = await getDocs(q);
+                    todosLosSitiosDirectorio = snapshot.docs.map(docSnap => {
+                        const data = docSnap.data();
+                        return {
+                            id: docSnap.id,
+                            nombre: data.name || data.nombre || 'Sin Nombre',
+                            imagen: data.logoImageUrl || data.featuredImageUrl || 'https://via.placeholder.com/80x60?text=No+Img',
+                            categoria: data.mainCategory || data.category || 'otro'
+                        };
+                    });
+                    mostrarDirectorio(todosLosSitiosDirectorio);
+                } catch (e) {
+                    console.error('Error cargando sitios:', e);
+                    if (listaDirectorioUl)
+                        listaDirectorioUl.innerHTML = '<li><p>Error cargando sitios.</p></li>';
+                }
+            }
+
+            await cargarSitios();
+        });
+    </script>
+
+</body>
+</html> 

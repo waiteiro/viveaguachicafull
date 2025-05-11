@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sitios - Vive Aguachica</title>
+    <link rel="stylesheet" href="sitios.css">
+</head>
+<body>
+
+    <header>
+        <!-- Aquí puedes incluir el logo y menú de navegación si ya los tienes -->
+        <h1>Vive Aguachica</h1>
+        <nav>
+            <!-- Ejemplo de navegación -->
+            <a href="/">Inicio</a>
+            <a href="/eventos.html">Eventos</a>
+            <a href="/sitios.html" class="active">Sitios</a>
+            <a href="/noticias.html">Noticias</a>
+        </nav>
+    </header>
+
+    <main class="sitios-container">
+        <section class="hero-sitios">
+            <h2>Descubre los Mejores Lugares de Aguachica</h2>
+            <p>Restaurantes, parques, cafés, museos y mucho más. ¡Explora la ciudad!</p>
+        </section>
+
+        <!-- Controles de Búsqueda y Filtros -->
+        <section class="controles-busqueda">
+            <div class="buscador">
+                <input type="text" id="searchInput" placeholder="Buscar sitio por nombre...">
+                <button id="searchButton">Buscar</button>
+            </div>
+            <div class="filtros">
+                <label for="categoryFilter">Filtrar por categoría:</label>
+                <select id="categoryFilter">
+                    <option value="todos">Todas</option>
+                    <option value="restaurante">Restaurantes</option>
+                    <option value="cafe">Cafés</option>
+                    <option value="parque">Parques</option>
+                    <option value="museo">Museos</option>
+                    <option value="bar">Bares</option>
+                    <option value="naturaleza">Naturaleza</option>
+                    <option value="historia">Historia</option>
+                    <!-- Agrega más categorías según necesites -->
+                </select>
+            </div>
+        </section>
+
+        <!-- Sitios Destacados -->
+        <section id="sitiosDestacados" class="sitios-seccion">
+            <h2>Sitios Destacados</h2>
+            <div class="grid-sitios" id="gridDestacados">
+                <!-- Las tarjetas de sitios destacados se cargarán aquí desde JS -->
+                <!-- Ejemplo de tarjeta (estructura base para JS) -->
+                <!-- 
+                <article class="site-card">
+                    <img src="placeholder-image.jpg" alt="Nombre del Sitio">
+                    <div class="card-content">
+                        <h3>Nombre del Sitio Destacado</h3>
+                        <p class="category">Categoría</p>
+                        <p class="address">Dirección del Sitio</p>
+                        <p class="description">Pequeña descripción del sitio...</p>
+                        <div class="tags">
+                            <span>Tag1</span><span>Tag2</span>
+                        </div>
+                        <p class="hours">Horario: 09:00 - 18:00</p>
+                    </div>
+                </article> 
+                -->
+            </div>
+        </section>
+
+        <!-- Recomendados esta Semana -->
+        <section id="sitiosRecomendadosSemana" class="sitios-seccion">
+            <h2>Recomendados de la Semana</h2>
+            <div class="grid-sitios" id="gridRecomendadosSemana">
+                <!-- Las tarjetas de sitios recomendados se cargarán aquí -->
+            </div>
+        </section>
+
+        <!-- Sitios con Eventos Próximos -->
+        <section id="sitiosConEventos" class="sitios-seccion">
+            <h2>Sitios con Eventos Próximos</h2>
+            <div class="grid-sitios" id="gridConEventos">
+                <!-- Las tarjetas de sitios con eventos se cargarán aquí -->
+            </div>
+        </section>
+
+        <!-- Sitios por Categoría -->
+        <section id="sitiosPorCategoria" class="sitios-seccion">
+            <h2>Sitios por Categoría</h2>
+            <!-- Aquí podrías tener sub-secciones o una forma de navegar por categorías -->
+            <div class="categorias-tabs">
+                <!-- Ejemplo de pestañas de categorías (puedes mejorarlo con JS) -->
+                <button class="tab-categoria active" data-category="todos">Todos</button>
+                <button class="tab-categoria" data-category="restaurante">Restaurantes</button>
+                <button class="tab-categoria" data-category="cafe">Cafés</button>
+                <button class="tab-categoria" data-category="parque">Parques</button>
+                <!-- Agrega más botones de categoría -->
+            </div>
+            <div class="grid-sitios" id="gridPorCategoria">
+                <!-- Las tarjetas de sitios por categoría se cargarán aquí -->
+            </div>
+        </section>
+
+        <!-- Sitios Abiertos Ahora -->
+        <section id="sitiosAbiertosAhora" class="sitios-seccion">
+            <h2>Sitios Abiertos Ahora</h2>
+            <div class="grid-sitios" id="gridAbiertosAhora">
+                <!-- Las tarjetas de sitios abiertos ahora se cargarán aquí -->
+            </div>
+        </section>
+
+        <!-- Botón Ver Todos -->
+        <section class="ver-todos-seccion">
+            <a href="directorio-sitios.html" class="btn-ver-todos">Ver todos los sitios (Directorio)</a>
+        </section>
+
+    </main>
+
+    <footer>
+        <!-- Información del pie de página -->
+        <p>&copy; 2024 Vive Aguachica. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+    <script type="module" src="sitios.js"></script>
+</body>
+</html> 

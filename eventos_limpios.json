@@ -1,0 +1,38 @@
+[
+        {
+            "id": "ejemplo-etiquetas",
+            "titulo": "Festival Abierto",
+            "categoria": "Cultura",
+            "descripcion": "Un festival para toda la familia con entrada gratuita y actividades para todos los públicos.",
+            "imagen": "eventos/images/evento-ejemplo.jpg",
+            "fechaInicio": "2025-09-10",
+            "hora": "10:00",
+            "lugar": "Parque Central, Aguachica",
+            "capacidad": 2000,
+            "organizador": {
+                "nombre": "Alcaldía de Aguachica",
+                "contacto": "info@aguachica.gov.co",
+                "telefono": "300-123-4567"
+            },
+            "publicoDirigido": "Todo público",
+            "redes": {
+                "facebook": "https:
+                "instagram": "https:
+            },
+            "artistas": [
+                {
+                    "id": "juanperez",
+                    "nombre": "Juan Pérez",
+                    "tipo": "artista",
+                    "imagen": "images/artistas/juanperez.jpg",
+                    "rol": "Acordeonista principal"
+                },
+                {
+                    "id": "sonaguachica",
+                    "nombre": "Son Aguachica",
+                    "tipo": "agrupacion",
+                    "imagen": "images/artistas/sonaguachica.jpg",
+                    "rol": "Grupo musical"
+                }
+            ],
+            "etiquetas": ["Gratis", "+18"]

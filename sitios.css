@@ -1,0 +1,321 @@
+/* Estilos Generales */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+header nav a {
+    color: #fff;
+    margin: 0 15px;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+header nav a.active {
+    font-weight: bold;
+    border-bottom: 2px solid #fff;
+}
+
+.sitios-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.hero-sitios {
+    background-color: #4CAF50; /* Un verde representativo */
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.hero-sitios h2 {
+    margin-top: 0;
+    font-size: 2.5rem;
+}
+
+/* Controles de Búsqueda y Filtros */
+.controles-busqueda {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #e9e9e9;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.buscador, .filtros {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Espacio en móviles */
+}
+
+.buscador input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+    font-size: 1rem;
+    flex-grow: 1; /* Permite que el input crezca */
+}
+
+.buscador button, .filtros select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.buscador button {
+    background-color: #555;
+    color: white;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    transition: background-color 0.3s ease;
+}
+
+.buscador button:hover {
+    background-color: #333;
+}
+
+.filtros label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.filtros select {
+    border-radius: 4px;
+}
+
+/* Secciones de Sitios */
+.sitios-seccion {
+    margin-bottom: 40px;
+}
+
+.sitios-seccion h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 10px;
+}
+
+/* Grid de Sitios y Tarjetas */
+.grid-sitios {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.site-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.site-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.site-card img {
+    width: 100%;
+    height: 200px; /* Altura fija para las imágenes */
+    object-fit: cover; /* Asegura que la imagen cubra el espacio sin deformarse */
+    display: block;
+}
+
+.site-card .card-content {
+    padding: 15px;
+}
+
+.site-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+    color: #444;
+}
+
+.site-card .category {
+    font-size: 0.9rem;
+    color: #fff;
+    background-color: #5cb85c; /* Verde para categoría */
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.site-card .address, .site-card .hours {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.site-card .description {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 12px;
+    /* Limitar número de líneas para la descripción (opcional) */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+}
+
+.site-card .tags span {
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 3px 7px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+/* Pestañas de Categorías */
+.categorias-tabs {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tab-categoria {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.tab-categoria:hover, .tab-categoria.active {
+    background-color: #4CAF50;
+    color: white;
+    border-color: #4CAF50;
+}
+
+/* Botón Ver Todos */
+.ver-todos-seccion {
+    text-align: center;
+    margin-top: 30px;
+    padding: 20px 0;
+}
+
+.btn-ver-todos {
+    display: inline-block;
+    background-color: #337ab7; /* Azul distintivo */
+    color: white;
+    padding: 12px 25px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-ver-todos:hover {
+    background-color: #286090;
+}
+
+/* Pie de Página */
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #333;
+    color: #fff;
+    margin-top: 30px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-sitios h2 {
+        font-size: 2rem;
+    }
+
+    .controles-busqueda {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .buscador, .filtros {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .buscador input[type="text"] {
+        border-radius: 4px; /* Ajuste para móviles */
+        margin-bottom: 5px; /* Espacio entre input y botón si se apilan */
+    }
+
+    .buscador button {
+        border-radius: 4px; /* Ajuste para móviles */
+        width: 100%; /* Botón de búsqueda ocupa todo el ancho */
+    }
+
+    .filtros {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filtros label {
+        margin-bottom: 5px;
+    }
+
+    .filtros select {
+        width: 100%;
+    }
+
+    .grid-sitios {
+        grid-template-columns: 1fr; /* Una columna en móviles */
+    }
+
+    .site-card h3 {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    header nav a {
+        margin: 0 8px;
+        font-size: 0.9rem;
+    }
+
+    .hero-sitios h2 {
+        font-size: 1.8rem;
+    }
+
+    .hero-sitios p {
+        font-size: 0.9rem;
+    }
+
+    .site-card {
+        /* Podrías ajustar más detalles de la tarjeta aquí si es necesario */
+    }
+} 
